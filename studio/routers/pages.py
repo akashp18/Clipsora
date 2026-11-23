@@ -2,6 +2,7 @@
 import hashlib
 import re
 import time
+from pathlib import Path
 
 import sqlalchemy as sa
 from fastapi import APIRouter, HTTPException, Request
@@ -99,7 +100,19 @@ _LEGAL_HTML = ""
 @router.get("/app")
 @router.get("/app/{rest:path}")
 def app_page(rest: str = ""):
-    """Every app address (/app/videos, /app/creators/<id>/setup ...) is the same page; it shows the right view."""
+    """The studio. Screens live under #/... so one page can carry all of them."""
+    return _page("studio.html")
+
+
+@router.get("/studio")
+def studio_page():
+    return _page("studio.html")
+
+
+@router.get("/classic")
+@router.get("/classic/{rest:path}")
+def classic_page(rest: str = ""):
+    """The previous workspace (live recording, creator profiles, Style Learner) stays reachable."""
     return _page("index.html")
 
 
@@ -135,6 +148,16 @@ def asset(name: str):
     # held for a day keeps working with yesterday's page: a token it now needs would be missing, and a card would
     # come out with no background at all.
     return FileResponse(WEB / name, media_type=kind, headers={"Cache-Control": "public, no-cache"})
+
+
+@router.get("/assets/fonts/{name}")
+def font_asset(name: str):
+    """The bundled caption faces, so the browser preview uses the same files as the renderer."""
+    fonts = Path(__file__).resolve().parent.parent / "fonts"
+    if not re.fullmatch(r"[\w\-]+\.ttf", name) or not (fonts / name).is_file():
+        raise HTTPException(404)
+    return FileResponse(fonts / name, media_type="font/ttf",
+                        headers={"Cache-Control": "public, max-age=604800, immutable"})
 
 
 @router.get("/favicon.ico")

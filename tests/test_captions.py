@@ -1,6 +1,7 @@
 """Check caption preferences and the subtitle events sent to the encoder."""
 import json
 import os
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -20,8 +21,13 @@ def check(name, condition):
 
 
 def has_dialogue(ass, style, text=""):
-    return any(line.startswith("Dialogue: ") and f",{style}," in line and text in line
-               for line in ass.splitlines())
+    # The hook is drawn in two tones, so its words carry ASS override tags between them; the words that
+    # reach the picture are what the check is about.
+    for line in ass.splitlines():
+        if line.startswith("Dialogue: ") and f",{style}," in line:
+            if text in re.sub(r"\{[^}]*\}", "", line):
+                return True
+    return False
 
 
 def rejects_caption_value(call):

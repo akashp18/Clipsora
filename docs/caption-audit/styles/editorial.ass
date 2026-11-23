@@ -1,0 +1,50 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,Archivo Black,80,&H00F6F9FA,&H00F6F9FA,&H00000000,&H73121614,0,0,0,0,100,100,0,0,3,4,0,5,0,0,0,1
+Style: Hook,Poppins ExtraBold,96,&H0014100E,&H0014100E,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:00.40,0:00:00.78,Cap,,0,0,0,,{\an5\pos(313,1499)\fs80\move(313,1540,313,1499,0,240)\fad(240,0)\c&H456BC7&}This
+Dialogue: 1,0:00:00.78,0:00:01.92,Cap,,0,0,0,,{\an5\pos(313,1499)\fs80\c&HF6F9FA&}This
+Dialogue: 1,0:00:00.40,0:00:00.78,Cap,,0,0,0,,{\an5\pos(477,1499)\fs80\c&HF6F9FA&}is
+Dialogue: 2,0:00:00.78,0:00:01.16,Cap,,0,0,0,,{\an5\pos(477,1499)\fs80\move(477,1540,477,1499,0,240)\fad(240,0)\c&H456BC7&}is
+Dialogue: 1,0:00:01.16,0:00:01.92,Cap,,0,0,0,,{\an5\pos(477,1499)\fs80\c&HF6F9FA&}is
+Dialogue: 1,0:00:00.40,0:00:01.16,Cap,,0,0,0,,{\an5\pos(656,1499)\fs80\c&HF6F9FA&}what
+Dialogue: 2,0:00:01.16,0:00:01.54,Cap,,0,0,0,,{\an5\pos(656,1499)\fs80\move(656,1540,656,1499,0,240)\fad(240,0)\c&H456BC7&}what
+Dialogue: 1,0:00:01.54,0:00:01.92,Cap,,0,0,0,,{\an5\pos(656,1499)\fs80\c&HF6F9FA&}what
+Dialogue: 1,0:00:00.40,0:00:01.54,Cap,,0,0,0,,{\an5\pos(829,1499)\fs80\c&HF6F9FA&}it
+Dialogue: 2,0:00:01.54,0:00:01.92,Cap,,0,0,0,,{\an5\pos(829,1499)\fs80\move(829,1540,829,1499,0,240)\fad(240,0)\c&H456BC7&}it
+Dialogue: 2,0:00:01.92,0:00:02.30,Cap,,0,0,0,,{\an5\pos(267,1451)\fs80\move(267,1492,267,1451,0,240)\fad(240,0)\c&H456BC7&}sounds
+Dialogue: 1,0:00:02.30,0:00:03.82,Cap,,0,0,0,,{\an5\pos(267,1451)\fs80\c&HF6F9FA&}sounds
+Dialogue: 1,0:00:01.92,0:00:02.30,Cap,,0,0,0,,{\an5\pos(535,1451)\fs80\c&HF6F9FA&}like
+Dialogue: 2,0:00:02.30,0:00:02.68,Cap,,0,0,0,,{\an5\pos(535,1451)\fs80\move(535,1492,535,1451,0,240)\fad(240,0)\c&H456BC7&}like
+Dialogue: 1,0:00:02.68,0:00:03.82,Cap,,0,0,0,,{\an5\pos(535,1451)\fs80\c&HF6F9FA&}like
+Dialogue: 1,0:00:01.92,0:00:02.68,Cap,,0,0,0,,{\an5\pos(765,1451)\fs80\c&HF6F9FA&}when
+Dialogue: 2,0:00:02.68,0:00:03.06,Cap,,0,0,0,,{\an5\pos(765,1451)\fs80\move(765,1492,765,1451,0,240)\fad(240,0)\c&H456BC7&}when
+Dialogue: 1,0:00:03.06,0:00:03.82,Cap,,0,0,0,,{\an5\pos(765,1451)\fs80\c&HF6F9FA&}when
+Dialogue: 1,0:00:01.92,0:00:03.06,Cap,,0,0,0,,{\an5\pos(942,1451)\fs80\c&HF6F9FA&}a
+Dialogue: 2,0:00:03.06,0:00:03.44,Cap,,0,0,0,,{\an5\pos(942,1451)\fs80\move(942,1492,942,1451,0,240)\fad(240,0)\c&H456BC7&}a
+Dialogue: 1,0:00:03.44,0:00:03.82,Cap,,0,0,0,,{\an5\pos(942,1451)\fs80\c&HF6F9FA&}a
+Dialogue: 1,0:00:01.92,0:00:03.44,Cap,,0,0,0,,{\an5\pos(540,1547)\fs80\c&HF6F9FA&}thought
+Dialogue: 2,0:00:03.44,0:00:03.82,Cap,,0,0,0,,{\an5\pos(540,1547)\fs80\move(540,1588,540,1547,0,240)\fad(240,0)\c&H456BC7&}thought
+Dialogue: 2,0:00:03.82,0:00:04.20,Cap,,0,0,0,,{\an5\pos(253,1451)\fs80\move(253,1492,253,1451,0,240)\fad(240,0)\c&H456BC7&}finally
+Dialogue: 1,0:00:04.20,0:00:05.91,Cap,,0,0,0,,{\an5\pos(253,1451)\fs80\c&HF6F9FA&}finally
+Dialogue: 1,0:00:03.82,0:00:04.20,Cap,,0,0,0,,{\an5\pos(537,1451)\fs80\c&HF6F9FA&}lands
+Dialogue: 2,0:00:04.20,0:00:04.58,Cap,,0,0,0,,{\an5\pos(537,1451)\fs80\move(537,1492,537,1451,0,240)\fad(240,0)\c&H456BC7&}lands
+Dialogue: 1,0:00:04.58,0:00:05.91,Cap,,0,0,0,,{\an5\pos(537,1451)\fs80\c&HF6F9FA&}lands
+Dialogue: 1,0:00:03.82,0:00:04.58,Cap,,0,0,0,,{\an5\pos(728,1451)\fs80\c&HF6F9FA&}in
+Dialogue: 2,0:00:04.58,0:00:04.96,Cap,,0,0,0,,{\an5\pos(728,1451)\fs80\move(728,1492,728,1451,0,240)\fad(240,0)\c&H456BC7&}in
+Dialogue: 1,0:00:04.96,0:00:05.91,Cap,,0,0,0,,{\an5\pos(728,1451)\fs80\c&HF6F9FA&}in
+Dialogue: 1,0:00:03.82,0:00:04.96,Cap,,0,0,0,,{\an5\pos(880,1451)\fs80\c&HF6F9FA&}one
+Dialogue: 2,0:00:04.96,0:00:05.34,Cap,,0,0,0,,{\an5\pos(880,1451)\fs80\move(880,1492,880,1451,0,240)\fad(240,0)\c&H456BC7&}one
+Dialogue: 1,0:00:05.34,0:00:05.91,Cap,,0,0,0,,{\an5\pos(880,1451)\fs80\c&HF6F9FA&}one
+Dialogue: 1,0:00:03.82,0:00:05.34,Cap,,0,0,0,,{\an5\pos(540,1547)\fs80\c&HF6F9FA&}piece
+Dialogue: 2,0:00:05.34,0:00:05.91,Cap,,0,0,0,,{\an5\pos(540,1547)\fs80\move(540,1588,540,1547,0,240)\fad(240,0)\c&H456BC7&}piece

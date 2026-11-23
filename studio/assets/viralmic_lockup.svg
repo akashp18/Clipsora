@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 256" width="100%" height="100%">
+  <defs>
+    <linearGradient id="lockupOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF9020" />
+      <stop offset="100%" stop-color="#F47B20" />
+    </linearGradient>
+    <linearGradient id="lockupWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E2DDD5" />
+    </linearGradient>
+    <filter id="lockupShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+  </defs>
+
+  <!-- Left: Emblem Scaled at (24, 16) with dimension 224x224 -->
+  <g transform="translate(16, 8) scale(0.47)" filter="url(#lockupShadow)">
+    <!-- Main "V" Graphic Emblem -->
+    <path d="M 72 108 L 152 108 L 256 420 L 210 420 Z" fill="url(#lockupWhite)" />
+    <path d="M 440 108 L 360 108 L 256 420 L 302 420 Z" fill="url(#lockupOrange)" />
+    
+    <!-- Shockmount -->
+    <path d="M 186 210 C 186 295 326 295 326 210" fill="none" stroke="url(#lockupOrange)" stroke-width="12" stroke-linecap="round" />
+    <circle cx="186" cy="210" r="10" fill="#FFFFFF" />
+    <circle cx="326" cy="210" r="10" fill="#F47B20" />
+
+    <!-- Mic Capsule -->
+    <rect x="210" y="100" width="92" height="150" rx="46" fill="#1C1E24" stroke="#FFFFFF" stroke-width="3" />
+    <path d="M 224 140 Q 256 126 288 140" stroke="#F47B20" stroke-width="4" fill="none" stroke-linecap="round" />
+    <path d="M 220 162 Q 256 148 292 162" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round" />
+    <path d="M 218 184 Q 256 172 294 184" stroke="#F47B20" stroke-width="4" fill="none" stroke-linecap="round" />
+    <path d="M 224 206 Q 256 196 288 206" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round" />
+    <rect x="209" y="170" width="94" height="10" rx="2" fill="#111215" stroke="url(#lockupOrange)" stroke-width="2" />
+    <circle cx="256" cy="175" r="4.5" fill="#FF3E00" />
+  </g>
+
+  <!-- Right: Typographic Wordmark -->
+  <g transform="translate(268, 40)" filter="url(#lockupShadow)">
+    <!-- VIRAL (Off-White Bold Sans) -->
+    <text x="0" y="112" font-family="'Montserrat', 'Archivo', 'Arial Black', sans-serif" font-weight="900" font-size="108" fill="url(#lockupWhite)" letter-spacing="4">VIRAL</text>
+    <!-- MIC (Electric Orange) -->
+    <text x="432" y="112" font-family="'Montserrat', 'Archivo', 'Arial Black', sans-serif" font-weight="900" font-size="108" fill="url(#lockupOrange)" letter-spacing="4">MIC</text>
+    
+    <!-- Accent Line Under MIC -->
+    <rect x="434" y="128" width="220" height="8" rx="4" fill="url(#lockupOrange)" />
+
+    <!-- Subtitle / Brand Tagline -->
+    <text x="4" y="166" font-family="'Montserrat', sans-serif" font-weight="600" font-size="24" fill="#9DA0AB" letter-spacing="8">PODCAST INTELLIGENCE &amp; SHORTS</text>
+  </g>
+</svg>

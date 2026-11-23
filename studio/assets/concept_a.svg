@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="100%" height="100%">
+  <title>VIRALMIC Concept A - The Kinetic Monogram</title>
+  <!-- Left Wing of V (Platinum Off-White) -->
+  <path d="M 36 44 L 84 44 L 128 212 L 100 212 Z" fill="#F4F2ED" />
+  
+  <!-- Right Wing of V (Electric Orange) -->
+  <path d="M 220 44 L 172 44 L 128 212 L 156 212 Z" fill="#F47B20" />
+  
+  <!-- Studio Shockmount Cradle -->
+  <path d="M 94 98 C 94 140 162 140 162 98" fill="none" stroke="#F47B20" stroke-width="7" stroke-linecap="round" />
+  <circle cx="94" cy="98" r="5" fill="#F4F2ED" />
+  <circle cx="162" cy="98" r="5" fill="#F47B20" />
+  
+  <!-- Center Broadcast Microphone Capsule -->
+  <rect x="106" y="44" width="44" height="74" rx="22" fill="#111214" stroke="#F4F2ED" stroke-width="4" />
+  
+  <!-- Acoustic Mesh Slats -->
+  <line x1="114" y1="64" x2="142" y2="64" stroke="#F47B20" stroke-width="3" stroke-linecap="round" />
+  <line x1="112" y1="76" x2="144" y2="76" stroke="#F4F2ED" stroke-width="3" stroke-linecap="round" />
+  <line x1="114" y1="88" x2="142" y2="88" stroke="#F47B20" stroke-width="3" stroke-linecap="round" />
+  <line x1="118" y1="100" x2="138" y2="100" stroke="#F4F2ED" stroke-width="3" stroke-linecap="round" />
+  
+  <!-- Live Recording Core Diode -->
+  <circle cx="128" cy="88" r="3.5" fill="#FF3E00" />
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="100%" height="100%">
+  <title>VIRALMIC Concept C - The Modern Broadcaster</title>
+  <!-- Chevron Crest (The Letter V Base) -->
+  <path d="M 44 80 L 128 218 L 212 80 L 174 80 L 128 160 L 82 80 Z" fill="#F47B20" />
+  
+  <!-- Precision Shockmount Cradle Loop -->
+  <path d="M 88 104 C 88 152 168 152 168 104" fill="none" stroke="#F4F2ED" stroke-width="6" stroke-linecap="round" />
+  
+  <!-- Central High-Fidelity Studio Mic -->
+  <rect x="104" y="38" width="48" height="84" rx="24" fill="#111214" stroke="#F4F2ED" stroke-width="4" />
+  
+  <!-- Precision Grille Dome -->
+  <path d="M 112 60 Q 128 50 144 60" stroke="#F47B20" stroke-width="3.5" fill="none" stroke-linecap="round" />
+  <path d="M 110 74 Q 128 64 146 74" stroke="#F4F2ED" stroke-width="3.5" fill="none" stroke-linecap="round" />
+  <path d="M 110 88 Q 128 78 146 88" stroke="#F47B20" stroke-width="3.5" fill="none" stroke-linecap="round" />
+  <path d="M 114 102 Q 128 94 142 102" stroke="#F4F2ED" stroke-width="3.5" fill="none" stroke-linecap="round" />
+
+  <!-- Diaphragm Live Core -->
+  <circle cx="128" cy="74" r="3.5" fill="#FF3E00" />
+  
+  <!-- Mic Stand Swivel Base -->
+  <path d="M 124 122 L 132 122 L 134 148 L 122 148 Z" fill="#F4F2ED" />
+</svg>

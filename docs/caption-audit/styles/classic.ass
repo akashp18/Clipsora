@@ -1,0 +1,46 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,Archivo Black,86,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,4,2,5,0,0,0,1
+Style: Hook,Poppins ExtraBold,96,&H0014100E,&H0014100E,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:00.40,0:00:00.78,Cap,,0,0,0,,{\an5\pos(476,1499)\fs86\c&HFFFFFF&}This
+Dialogue: 1,0:00:00.78,0:00:01.16,Cap,,0,0,0,,{\an5\pos(476,1499)\fs86\c&HFFFFFF&}This
+Dialogue: 1,0:00:00.40,0:00:00.78,Cap,,0,0,0,,{\an5\pos(662,1499)\fs86\c&HFFFFFF&}Is
+Dialogue: 2,0:00:00.78,0:00:01.16,Cap,,0,0,0,,{\an5\pos(662,1499)\fs86\c&HFFFFFF&}Is
+Dialogue: 2,0:00:01.16,0:00:01.54,Cap,,0,0,0,,{\an5\pos(290,1499)\fs86\c&HFFFFFF&}What
+Dialogue: 1,0:00:01.54,0:00:02.30,Cap,,0,0,0,,{\an5\pos(290,1499)\fs86\c&HFFFFFF&}What
+Dialogue: 1,0:00:01.16,0:00:01.54,Cap,,0,0,0,,{\an5\pos(488,1499)\fs86\c&HFFFFFF&}It
+Dialogue: 2,0:00:01.54,0:00:01.92,Cap,,0,0,0,,{\an5\pos(488,1499)\fs86\c&HFFFFFF&}It
+Dialogue: 1,0:00:01.92,0:00:02.30,Cap,,0,0,0,,{\an5\pos(488,1499)\fs86\c&HFFFFFF&}It
+Dialogue: 1,0:00:01.16,0:00:01.92,Cap,,0,0,0,,{\an5\pos(738,1499)\fs86\c&HFFFFFF&}Sounds
+Dialogue: 2,0:00:01.92,0:00:02.30,Cap,,0,0,0,,{\an5\pos(738,1499)\fs86\c&HFFFFFF&}Sounds
+Dialogue: 2,0:00:02.30,0:00:02.68,Cap,,0,0,0,,{\an5\pos(335,1499)\fs86\c&HFFFFFF&}Like
+Dialogue: 1,0:00:02.68,0:00:03.44,Cap,,0,0,0,,{\an5\pos(335,1499)\fs86\c&HFFFFFF&}Like
+Dialogue: 1,0:00:02.30,0:00:02.68,Cap,,0,0,0,,{\an5\pos(607,1499)\fs86\c&HFFFFFF&}When
+Dialogue: 2,0:00:02.68,0:00:03.06,Cap,,0,0,0,,{\an5\pos(607,1499)\fs86\c&HFFFFFF&}When
+Dialogue: 1,0:00:03.06,0:00:03.44,Cap,,0,0,0,,{\an5\pos(607,1499)\fs86\c&HFFFFFF&}When
+Dialogue: 1,0:00:02.30,0:00:03.06,Cap,,0,0,0,,{\an5\pos(812,1499)\fs86\c&HFFFFFF&}A
+Dialogue: 2,0:00:03.06,0:00:03.44,Cap,,0,0,0,,{\an5\pos(812,1499)\fs86\c&HFFFFFF&}A
+Dialogue: 2,0:00:03.44,0:00:03.82,Cap,,0,0,0,,{\an5\pos(363,1454)\fs86\c&HFFFFFF&}Thought
+Dialogue: 1,0:00:03.82,0:00:04.58,Cap,,0,0,0,,{\an5\pos(363,1454)\fs86\c&HFFFFFF&}Thought
+Dialogue: 1,0:00:03.44,0:00:03.82,Cap,,0,0,0,,{\an5\pos(754,1454)\fs86\c&HFFFFFF&}Finally
+Dialogue: 2,0:00:03.82,0:00:04.20,Cap,,0,0,0,,{\an5\pos(754,1454)\fs86\c&HFFFFFF&}Finally
+Dialogue: 1,0:00:04.20,0:00:04.58,Cap,,0,0,0,,{\an5\pos(754,1454)\fs86\c&HFFFFFF&}Finally
+Dialogue: 1,0:00:03.44,0:00:04.20,Cap,,0,0,0,,{\an5\pos(540,1544)\fs86\c&HFFFFFF&}Lands
+Dialogue: 2,0:00:04.20,0:00:04.58,Cap,,0,0,0,,{\an5\pos(540,1544)\fs86\c&HFFFFFF&}Lands
+Dialogue: 2,0:00:04.58,0:00:04.96,Cap,,0,0,0,,{\an5\pos(273,1499)\fs86\c&HFFFFFF&}In
+Dialogue: 1,0:00:04.96,0:00:05.91,Cap,,0,0,0,,{\an5\pos(273,1499)\fs86\c&HFFFFFF&}In
+Dialogue: 1,0:00:04.58,0:00:04.96,Cap,,0,0,0,,{\an5\pos(454,1499)\fs86\c&HFFFFFF&}One
+Dialogue: 2,0:00:04.96,0:00:05.34,Cap,,0,0,0,,{\an5\pos(454,1499)\fs86\c&HFFFFFF&}One
+Dialogue: 1,0:00:05.34,0:00:05.91,Cap,,0,0,0,,{\an5\pos(454,1499)\fs86\c&HFFFFFF&}One
+Dialogue: 1,0:00:04.58,0:00:05.34,Cap,,0,0,0,,{\an5\pos(721,1499)\fs86\c&HFFFFFF&}Piece
+Dialogue: 2,0:00:05.34,0:00:05.91,Cap,,0,0,0,,{\an5\pos(721,1499)\fs86\c&HFFFFFF&}Piece

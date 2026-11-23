@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 
-from .. import account
+from .. import account, config
 from ..api_common import job_or_404
 
 router = APIRouter()
@@ -17,6 +17,24 @@ def media_file(jid: str, name: str, download: int = 0):
         raise HTTPException(404)
     job = job_or_404(jid)
     f = Path(job["dir"]) / "clips" / name
+    if not f.is_file() and name.endswith("_cover.jpg"):
+        cid = name[:-10]
+        clip_vid = Path(job["dir"]) / "clips" / f"{cid}.mp4"
+        if clip_vid.is_file():
+            try:
+                from .. import branding
+                clip = next((c for c in job.get("clips", []) if c.get("id") == cid), {})
+                headline = clip.get("hook") or clip.get("title") or "THE NEXT FRONTIER"
+                opts = job.get("options") or {}
+                branding.create_reel_cover(
+                    video_path=clip_vid,
+                    output_path=f,
+                    headline=headline,
+                    brand_name=clip.get("brand_name") or opts.get("brand_name") or config.BRAND_NAME or "STUDIO",
+                    logo_path=clip.get("brand_logo") or None,
+                )
+            except Exception:
+                pass
     if not f.is_file():
         raise HTTPException(404)
     save_as = name

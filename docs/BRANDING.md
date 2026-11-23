@@ -1,19 +1,18 @@
 # Branding
 
-## 1. Naming — ten candidates
+## 1. Naming — candidate names
 
 | # | Name | Reads as | Strength | Risk |
 |---|---|---|---|---|
-| 1 | **Shortsmith** | shorts + smith (a maker) | says the category and the craft; works as a verb ("smith it"); strong GitHub org | smith/forge names are common; needs a search |
-| 2 | **Offcut** | the piece cut from a longer film | short, memorable, design-literate, ownable | slightly obscure to non-editors |
-| 3 | **Clipwright** | clip + wright (maker) | precise, self-hosted craft feel | "wright" reads archaic to some |
-| 4 | **Slatecut** | slate (film) + cut | cinematic, short | two hard consonants, weaker recall |
-| 5 | **Reelcast** | reel + broadcast | hints at live + publishing | suggests a streaming service, not a tool |
-| 6 | **Framecut** | frame + cut | technical, clear | generic-sounding |
-| 7 | **Streamcut** | stream + cut | nails the live use case | narrows the product to streamers |
-| 8 | **Cutline** | the line where you cut | editorial, quiet, premium | weak association with video |
-| 9 | **Clipforge** | clip + forge | energetic, maker-ish | heavily used pattern; likely collisions |
-| 10 | **Vantage** | a good position/view | premium, short | generic; unrelated to clipping |
+| 1 | **Offcut** | the piece cut from a longer film | short, memorable, design-literate, ownable | slightly obscure to non-editors |
+| 2 | **Clipwright** | clip + wright (maker) | precise, self-hosted craft feel | "wright" reads archaic to some |
+| 3 | **Slatecut** | slate (film) + cut | cinematic, short | two hard consonants, weaker recall |
+| 4 | **Reelcast** | reel + broadcast | hints at live + publishing | suggests a streaming service, not a tool |
+| 5 | **Framecut** | frame + cut | technical, clear | generic-sounding |
+| 6 | **Streamcut** | stream + cut | nails the live use case | narrows the product to streamers |
+| 7 | **Cutline** | the line where you cut | editorial, quiet, premium | weak association with video |
+| 8 | **Clipforge** | clip + forge | energetic, maker-ish | heavily used pattern; likely collisions |
+| 9 | **Vantage** | a good position/view | premium, short | generic; unrelated to clipping |
 
 **The name is Clipsora.** A coined word (clip + -sora): short, spellable from hearing, and it works as a GitHub org. The checks below still apply before public use.
 

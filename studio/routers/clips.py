@@ -3,7 +3,10 @@
 These routes were moved out of server.py without changing a line of behaviour: same paths, same guards, same
 answers. server.py re-exports the function names because the tests (and any script) call them directly.
 """
+from pathlib import Path
+
 from fastapi import APIRouter, Body, HTTPException
+from fastapi.responses import FileResponse
 
 from .. import account, ai, ctx, jobs, safe
 from ..api_common import clip_or_404, job_or_404, throttle
@@ -25,6 +28,17 @@ def rerender(jid: str, cid: str, body: dict = Body(...)):
     except (ValueError, TypeError) as e:
         raise HTTPException(400, str(e))
     return jobs.public(job)
+
+
+@router.get("/api/jobs/{jid}/clips/{cid}/preview")
+def clean_preview(jid: str, cid: str):
+    """The clean cut before captions are burned in, for the Caption Studio's live overlay."""
+    job = job_or_404(jid)
+    clip = clip_or_404(job, cid)
+    src = Path(str(clip.get("src") or ""))
+    if not src.is_file():
+        raise HTTPException(404, "This clip has no clean source; watch the rendered file instead.")
+    return FileResponse(src, media_type="video/mp4", headers={"Cache-Control": "private, max-age=300"})
 
 
 @router.get("/api/jobs/{jid}/clips/{cid}/captions")

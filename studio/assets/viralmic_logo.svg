@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Radial Glow -->
+    <radialGradient id="ambientGlow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#F47B20" stop-opacity="0.32" />
+      <stop offset="60%" stop-color="#F47B20" stop-opacity="0.06" />
+      <stop offset="100%" stop-color="#0E1013" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Wing & Mic Gradients -->
+    <linearGradient id="leftWingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#F0ECE1" />
+      <stop offset="100%" stop-color="#C5C0B4" />
+    </linearGradient>
+
+    <linearGradient id="rightWingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF8C2B" />
+      <stop offset="50%" stop-color="#F47B20" />
+      <stop offset="100%" stop-color="#D95305" />
+    </linearGradient>
+
+    <linearGradient id="micBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2D3039" />
+      <stop offset="45%" stop-color="#1B1C22" />
+      <stop offset="100%" stop-color="#111215" />
+    </linearGradient>
+
+    <linearGradient id="goldAccentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFB347" />
+      <stop offset="100%" stop-color="#F47B20" />
+    </linearGradient>
+
+    <linearGradient id="metallicRim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#8E929C" stop-opacity="0.2" />
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="heroShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.75" />
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#F47B20" flood-opacity="0.30" />
+    </filter>
+
+    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Ambient Backdrop Glow -->
+  <circle cx="256" cy="240" r="230" fill="url(#ambientGlow)" />
+
+  <!-- Outer Kinetic Acoustic Waves (Echoing Virality) -->
+  <g stroke="url(#goldAccentGrad)" stroke-width="4.5" stroke-linecap="round" fill="none" opacity="0.45">
+    <path d="M 120 180 A 180 180 0 0 0 90 270" stroke-dasharray="14 10" />
+    <path d="M 392 180 A 180 180 0 0 1 422 270" stroke-dasharray="14 10" />
+    <path d="M 96 140 A 220 220 0 0 0 64 260" stroke-dasharray="18 14" opacity="0.25" />
+    <path d="M 416 140 A 220 220 0 0 1 448 260" stroke-dasharray="18 14" opacity="0.25" />
+  </g>
+
+  <!-- Main "V" Graphic Emblem with 3D Depth & Aerodynamic Geometry -->
+  <g filter="url(#heroShadow)">
+    <!-- LEFT WING OF THE V (Precision Off-White Platinum) -->
+    <!-- Outer Facet -->
+    <path d="M 72 108 L 152 108 L 256 420 L 210 420 Z" fill="url(#leftWingGrad)" />
+    <!-- Inner Shadow Facet for Chiseled 3D Form -->
+    <path d="M 128 108 L 152 108 L 256 420 L 238 420 Z" fill="#9C978C" opacity="0.4" />
+    <!-- Specular Highlight Top Chamfer -->
+    <path d="M 72 108 L 152 108 L 144 116 L 80 116 Z" fill="#FFFFFF" opacity="0.9" />
+
+    <!-- RIGHT WING OF THE V (Electric Brand Orange) -->
+    <!-- Outer Facet -->
+    <path d="M 440 108 L 360 108 L 256 420 L 302 420 Z" fill="url(#rightWingGrad)" />
+    <!-- Inner Highlight Facet for Chiseled Glow -->
+    <path d="M 384 108 L 360 108 L 256 420 L 274 420 Z" fill="#FFB347" opacity="0.5" />
+    <!-- Top Edge Highlight -->
+    <path d="M 440 108 L 360 108 L 368 116 L 432 116 Z" fill="#FFE0B2" opacity="0.9" />
+  </g>
+
+  <!-- CENTER STUDIO MICROPHONE CAPSULE (The Core of the Podcaster) -->
+  <g filter="url(#heroShadow)">
+    <!-- Mic Stand Joint / Horizon Base -->
+    <path d="M 230 330 L 282 330 L 270 376 L 242 376 Z" fill="#1C1D22" stroke="url(#metallicRim)" stroke-width="2" />
+    <circle cx="256" cy="354" r="6" fill="#F47B20" />
+
+    <!-- U-Shaped Mic Cradle / Shockmount Arm -->
+    <path d="M 186 210 C 186 295 326 295 326 210" fill="none" stroke="url(#rightWingGrad)" stroke-width="10" stroke-linecap="round" />
+    <circle cx="186" cy="210" r="9" fill="#F4F2ED" stroke="#111215" stroke-width="2" />
+    <circle cx="326" cy="210" r="9" fill="#F47B20" stroke="#111215" stroke-width="2" />
+
+    <!-- Microphone Capsule Body -->
+    <rect x="210" y="100" width="92" height="150" rx="46" fill="url(#micBodyGrad)" stroke="url(#metallicRim)" stroke-width="3" />
+
+    <!-- Acoustic Metal Mesh Grille & Slats -->
+    <g fill="#F4F2ED" opacity="0.9">
+      <!-- Upper Grille Dome Pattern -->
+      <path d="M 224 138 Q 256 122 288 138" stroke="#F47B20" stroke-width="3.5" fill="none" stroke-linecap="round" />
+      <path d="M 220 156 Q 256 142 292 156" stroke="#F4F2ED" stroke-width="3.5" fill="none" stroke-linecap="round" />
+      <path d="M 218 174 Q 256 162 294 174" stroke="#F47B20" stroke-width="3.5" fill="none" stroke-linecap="round" />
+      <path d="M 220 192 Q 256 182 292 192" stroke="#F4F2ED" stroke-width="3.5" fill="none" stroke-linecap="round" />
+      <path d="M 224 210 Q 256 202 288 210" stroke="#F47B20" stroke-width="3.5" fill="none" stroke-linecap="round" />
+    </g>
+
+    <!-- Center Metallic Band / Diaphragm Ring -->
+    <rect x="209" y="166" width="94" height="12" rx="3" fill="#141519" stroke="url(#rightWingGrad)" stroke-width="2" />
+    <!-- Studio Live Recording Neon Dot (Pulse of Truth) -->
+    <circle cx="256" cy="172" r="4.5" fill="#FF3E00" filter="url(#neonGlow)" />
+  </g>
+
+  <!-- Foreground Gloss / Light Reflection Across Capsule -->
+  <path d="M 220 114 C 234 104 246 102 246 102 L 234 240 C 224 230 216 216 216 195 Z" fill="#FFFFFF" opacity="0.12" />
+</svg>

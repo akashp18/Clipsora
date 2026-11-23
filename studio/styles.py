@@ -13,14 +13,20 @@ SCHEMA_VERSION = 1
 
 # The caption fonts that ship with the app. A preset may only name one of these, because the renderer needs the
 # actual file to measure and draw each word.
-FONTS = {"poppins": "Poppins ExtraBold", "anton": "Anton", "archivo": "Archivo Black"}
+FONTS = {"poppins": "Poppins ExtraBold", "anton": "Anton", "archivo": "Archivo Black",
+         "montserrat": "Montserrat SemiBold", "playfair": "Playfair Display Italic",
+         # The rest of the library. Each is one single-weight file in `studio/fonts` with its own licence text, so
+         # a caption never depends on a font the machine happens to have installed.
+         "bebas": "Bebas Neue", "fjalla": "Fjalla One", "dmserif": "DM Serif Display",
+         "zilla": "Zilla Slab SemiBold", "bungee": "Bungee", "russo": "Russo One",
+         "marker": "Permanent Marker", "mono": "Space Mono"}
 
 # What a caption preset can say — and, one for one, what the renderer reads. A setting that the renderer does not
 # use is not in this set: the schema and the drawing code must not drift apart, and `tests/test_styles.py` fails if
 # they do.
 CAPTION_KEYS = {
     "font", "size", "base", "active", "strong", "outline", "outline_colour", "shadow", "shadow_colour",
-    "box", "box_opacity", "position", "transform", "max_words", "line_spacing",
+    "box", "box_opacity", "position", "transform", "max_words", "line_spacing", "letter_spacing",
     "animation", "anim_ms", "intensity", "highlight",
 }
 
@@ -30,7 +36,7 @@ CAPTION_DEFAULTS = {
     "font": "poppins", "size": 120, "base": "#FFFFFF", "active": "#F0A020", "strong": "#FFFFFF",
     "outline": 6, "outline_colour": "#000000", "shadow": 0, "shadow_colour": "#000000",
     "box": "", "box_opacity": 0, "position": "bottom", "transform": "upper",
-    "max_words": 3, "line_spacing": 1.05, "animation": "pop", "anim_ms": 180, "intensity": 60,
+    "max_words": 3, "line_spacing": 1.05, "letter_spacing": 0, "animation": "pop", "anim_ms": 180, "intensity": 60,
     "highlight": "word",
 }
 
@@ -48,44 +54,44 @@ def _cap(label, category, **kw) -> dict:
 
 CAPTION_PRESETS: dict[str, dict] = {
     # ---- existing three: same look as before, now expressed in the full schema
-    "bounce": _cap("Bounce", "Popular", font="poppins", size=132, base="#FFFFFF", active="#00F0FF",
-                   strong="#FFFFFF", outline=7, animation="bounce", anim_ms=200, intensity=88, max_words=3),
-    "hype": _cap("Hype", "Popular", font="anton", size=152, base="#FFFFFF", active="#3C3CFF", strong="#00D7FF",
-                 outline=7, animation="pop", anim_ms=200, intensity=92, max_words=2, transform="upper"),
-    "clean": _cap("Clean", "Clean", font="poppins", size=100, base="#FFFFFF", active="#6BD7FF",
-                  strong="#FFFFFF", outline=5, animation="pop", anim_ms=160, intensity=40, max_words=4,
+    "bounce": _cap("Bounce", "Popular", font="poppins", size=120, base="#FFFFFF", active="#00F0FF",
+                   strong="#FFFFFF", outline=6, shadow=2, animation="bounce", anim_ms=200, intensity=78, max_words=2),
+    "hype": _cap("Hype", "Popular", font="anton", size=136, base="#FFFFFF", active="#3C3CFF", strong="#00D7FF",
+                 outline=6, shadow=2, animation="pop", anim_ms=200, intensity=82, max_words=2, transform="upper"),
+    "clean": _cap("Clean", "Clean", font="poppins", size=92, base="#FFFFFF", active="#6BD7FF",
+                  strong="#FFFFFF", outline=4, shadow=2, animation="pop", anim_ms=160, intensity=35, max_words=3,
                   transform="none"),
     # ---- the rest of the library
-    "kinetic": _cap("Kinetic Highlight", "Popular", font="anton", size=146, base="#FFFFFF", active="#FFD54A",
-                    outline=8, animation="scale", anim_ms=220, intensity=95, max_words=2, highlight="word"),
-    "minimal": _cap("Minimal", "Clean", font="poppins", size=84, base="#FFFFFF", active="#FFFFFF",
+    "kinetic": _cap("Kinetic Highlight", "Popular", font="anton", size=132, base="#FFFFFF", active="#FFD54A",
+                    outline=6, shadow=2, animation="scale", anim_ms=220, intensity=85, max_words=2, highlight="word"),
+    "minimal": _cap("Minimal", "Clean", font="poppins", size=76, base="#FFFFFF", active="#FFFFFF",
                     outline=3, animation="fade", anim_ms=140, intensity=15, max_words=5, transform="none",
                     highlight="none"),
-    "cinematic": _cap("Cinematic", "Cinematic", font="archivo", size=92, base="#F3F0E9", active="#D98A61",
+    "cinematic": _cap("Cinematic", "Cinematic", font="archivo", size=82, base="#F3F0E9", active="#D98A61",
                       outline=2, shadow=4, shadow_colour="#000000", animation="fade", anim_ms=260, intensity=22,
                       max_words=4, transform="none", line_spacing=1.15, position="bottom"),
-    "editorial": _cap("Editorial", "Cinematic", font="archivo", size=88, base="#FAF9F6", active="#C76B45",
-                      outline=0, box="#14161200", box_opacity=55, animation="slide", anim_ms=240, intensity=30,
+    "editorial": _cap("Editorial", "Cinematic", font="archivo", size=80, base="#FAF9F6", active="#C76B45",
+                      outline=0, box="#141612", box_opacity=55, animation="slide", anim_ms=240, intensity=30,
                       max_words=5, transform="none", line_spacing=1.2, position="bottom"),
-    "podcast": _cap("Podcast", "Clean", font="poppins", size=92, base="#F3F0E9", active="#B7BFA2",
+    "podcast": _cap("Podcast", "Clean", font="poppins", size=82, base="#F3F0E9", active="#B7BFA2",
                     outline=0, box="#202321", box_opacity=70, animation="fade", anim_ms=180, intensity=20,
                     max_words=4, transform="none", line_spacing=1.15),
-    "gamer": _cap("Gamer", "Social", font="anton", size=130, base="#EDEDED", active="#7ED957", outline=6,
+    "gamer": _cap("Gamer", "Social", font="anton", size=116, base="#EDEDED", active="#7ED957", outline=5,
                   outline_colour="#101010", shadow=3, shadow_colour="#000000", animation="bounce", anim_ms=170,
-                  intensity=80, max_words=3, transform="upper"),
-    "typewriter": _cap("Typewriter", "Playful", font="archivo", size=96, base="#F3F0E9", active="#F3F0E9",
-                       outline=2, animation="typewriter", anim_ms=260, intensity=35, max_words=6,
+                  intensity=70, max_words=2, transform="upper"),
+    "typewriter": _cap("Typewriter", "Playful", font="archivo", size=84, base="#F3F0E9", active="#F3F0E9",
+                       outline=2, animation="typewriter", anim_ms=260, intensity=35, max_words=4,
                        transform="none", highlight="none"),
-    "karaoke": _cap("Karaoke", "Social", font="poppins", size=112, base="#FFFFFF", active="#C76B45",
-                    outline=5, animation="karaoke", anim_ms=120, intensity=25, max_words=4, highlight="word"),
-    "stacked": _cap("Stacked", "Social", font="anton", size=120, base="#FFFFFF", active="#FFD54A", outline=6,
+    "karaoke": _cap("Karaoke", "Social", font="poppins", size=100, base="#FFFFFF", active="#C76B45",
+                    outline=4, shadow=2, animation="karaoke", anim_ms=120, intensity=25, max_words=3, highlight="word"),
+    "stacked": _cap("Stacked", "Social", font="anton", size=108, base="#FFFFFF", active="#FFD54A", outline=5,
                     animation="slide", anim_ms=200, intensity=55, max_words=1, transform="upper",
                     line_spacing=1.05),
-    "classic": _cap("Classic", "Clean", font="archivo", size=94, base="#FFFFFF", active="#FFFFFF", outline=4,
-                    shadow=2, shadow_colour="#000000", animation="none", anim_ms=0, intensity=0, max_words=5,
+    "classic": _cap("Classic", "Clean", font="archivo", size=86, base="#FFFFFF", active="#FFFFFF", outline=4,
+                    shadow=2, shadow_colour="#000000", animation="none", anim_ms=0, intensity=0, max_words=3,
                     transform="title", highlight="none"),
-    "glitch": _cap("Glitch", "Playful", font="anton", size=138, base="#FFFFFF", active="#FF3C3C", outline=5,
-                   animation="glitch", anim_ms=170, intensity=90, max_words=2, transform="upper"),
+    "glitch": _cap("Glitch", "Playful", font="anton", size=122, base="#FFFFFF", active="#FF3C3C", outline=5,
+                   shadow=2, animation="glitch", anim_ms=170, intensity=80, max_words=2, transform="upper"),
 }
 
 # Legacy names that were renamed: a saved project keeps opening with the style it was made in.
@@ -102,6 +108,8 @@ def _lay(label, category, description, kind, **kw) -> dict:
 
 
 LAYOUT_PRESETS: dict[str, dict] = {
+    # ---- AI director
+    "auto": _lay("AI Smart Director", "AI", "AI frame-adaptive: detects speakers, dialogue, and graphics to apply optimal framing.", "auto"),
     # ---- the eight that already existed
     "blur": _lay("Blurred Fill", "Fit", "The whole frame, with a blurred copy behind it to fill the sides.", "blur"),
     "zoom": _lay("Zoomed In", "Fit", "The whole frame, closer, with a blurred fill behind it.", "blur", zoom=1.25),
@@ -130,7 +138,7 @@ LAYOUT_PRESETS: dict[str, dict] = {
                   "brand", bars=12),
 }
 
-LAYOUT_ALIASES: dict[str, str] = {}
+LAYOUT_ALIASES: dict[str, str] = {"smart": "auto"}
 
 
 # ----------------------------------------------------------------------------------------------- validation
@@ -201,6 +209,8 @@ def caption_config(style=None, overrides=None) -> dict:
             out[k] = _num(v, 1, 8, k, out[k], as_int=True)
         elif k == "line_spacing":
             out[k] = _num(v, 0.9, 1.6, k, out[k])
+        elif k == "letter_spacing":
+            out[k] = _num(v, -2, 20, k, out[k], as_int=True)
         elif k == "anim_ms":
             out[k] = _num(v, 0, 800, k, out[k], as_int=True)
         elif k == "intensity":

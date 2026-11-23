@@ -1,6 +1,7 @@
 """The big text on the video: a person can set their own, for every clip of a video or as a creator's standing text,
 for a campaign that asks for a set line. Runs against the code directly with its own empty data folder."""
 import os
+import re
 import sys
 import tempfile
 
@@ -25,7 +26,8 @@ check("the text is kept as typed, links and names included", creators.clean_hook
 check("it is one line", creators.clean_hook("a\nb\x00c") == "a b c")
 check("it is short enough for the box", len(creators.clean_hook("x" * 200)) == 60)
 check("nothing typed is nothing", creators.clean_hook(None) == "" and creators.clean_hook("   ") == "")
-check("what is typed reaches the picture whole", "@kai #ad" in "\n".join(render._hook_events(render._clean("Clipped from @kai #ad"), 10, 300)))
+check("what is typed reaches the picture whole",
+      "@kai #ad" in re.sub(r"\{[^}]*\}", "", "\n".join(render._hook_events(render._clean("Clipped from @kai #ad"), 10, 300))))
 
 u, _ = auth._create("bt@example.com", "Bt", password_hash="x")
 with ctx.as_user(u.id):

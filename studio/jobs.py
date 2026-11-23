@@ -4,6 +4,7 @@ import json
 import os
 import math
 import queue
+import re
 import shutil
 import math
 import threading
@@ -12,7 +13,29 @@ import traceback
 import uuid
 from pathlib import Path
 
-from . import brain, config, creators, ctx, facecam, games, hashtags, load, media, quality, render, roman, safe, styles, transcribe, usage
+from . import (  # noqa: E402
+    ai as ai_service,
+    brain,
+    config,
+    creators,
+    ctx,
+    db,
+    facecam,
+    games,
+    hashtags,
+    load,
+    creative,
+    media,
+    narrative,
+    podcast,
+    quality,
+    render,
+    roman,
+    safe,
+    styles,
+    transcribe,
+    usage,
+)
 
 class _FairQueue:
     """Whose video is next. Each person has their own line and the lines take turns, so someone who adds ten
@@ -109,10 +132,15 @@ _lock = threading.RLock()
 on_clip_ready: list = []   # callbacks (job, clip), run once when a clip first finishes
 
 DEFAULTS = {"max_clips": 6, "min_len": 15, "max_len": 60, "style": "bounce", "layout": "blur", "quality": 720,
-            "range_start": None, "range_end": None, "captions": True, "hook_text": "", "description_text": ""}
+            "range_start": None, "range_end": None, "captions": True, "hook_text": "", "description_text": "", "mode": "auto",
+            "duration_mode": "content", "direction": "auto",
+            "branding": None, "watermark": None, "intro_cover": None, "outro": None,
+            "brand_name": "", "ig_handle": "", "yt_channel": "", "brand_color": "#F47B20",
+            "brand_id": ""}
 
 
-LIMITS = {"max_clips": (1, 20), "min_len": (5, 120), "max_len": (10, 180), "quality": (360, 1080)}
+LIMITS = {"max_clips": (1, 20), "min_len": (8, 120), "max_len": (10, 180), "quality": (360, 1080)}
+DIRECTION_NAMES = ("auto", "off") + creative.names()
 
 
 def clean_options(options) -> dict:
@@ -123,6 +151,31 @@ def clean_options(options) -> dict:
             if not isinstance(v, bool):
                 raise ValueError("Captions must be on or off.")
             out[k] = v
+            continue
+        if k == "mode":
+            out["mode"] = v if v in ("auto", "podcast", "gaming", "standard") else "auto"
+            continue
+        if k == "duration_mode":
+            out["duration_mode"] = v if v in ("content", "range") else "content"
+            continue
+        if k == "direction":
+            out["direction"] = v if v in DIRECTION_NAMES else "auto"
+            continue
+        if k in ("branding", "watermark", "intro_cover", "outro"):
+            if v is None:
+                continue
+            if not isinstance(v, bool):
+                raise ValueError(f"{k} must be true or false.")
+            out[k] = v
+            continue
+        if k == "brand_color":
+            if isinstance(v, str) and v.strip():
+                out[k] = styles._hex(v.strip(), "brand_color", "#f47b20")
+            continue
+        if k in ("brand_name", "ig_handle", "yt_channel", "brand_id"):
+            if not isinstance(v, str):
+                continue
+            out[k] = re.sub(r"[^\w\-\.\@\/ ]+", "", v).strip()[:40]
             continue
         if k in ("caption_cfg", "layout_cfg"):
             if v in (None, ""):
@@ -143,6 +196,7 @@ def clean_options(options) -> dict:
         elif k == "style":
             v = v if v in render.STYLES else DEFAULTS["style"]
         elif k == "layout":
+            v = styles.LAYOUT_ALIASES.get(v, v)
             v = v if v in render.LAYOUTS else DEFAULTS["layout"]
         else:                                    # range_start, range_end: seconds into the video
             v = float(v)
@@ -161,11 +215,20 @@ def job_dir(jid) -> Path:
 HIDDEN = ("dir", "user", "source_path", "recover")
 
 
+def public_clip(c: dict) -> dict:
+    """What the browser may see for a single clip: no server paths or internal word caches."""
+    out = {k: v for k, v in c.items() if k not in ("src", "fixed_words", "fixed_for", "edited_words")}
+    # The clean cut is the trimmed source before captions, branding and the outro are burned in. The Caption
+    # Studio previews on it so a styled overlay is not drawn on top of already-rendered words.
+    out["clean_preview"] = bool(c.get("src") and Path(str(c["src"])).is_file())
+    return out
+
+
 def public(job) -> dict:
     """What the browser may see: no server paths, no owner id."""
     out = {k: v for k, v in job.items() if k not in HIDDEN}
     out["source"] = {k: v for k, v in job["source"].items() if k != "path"}
-    out["clips"] = [{k: v for k, v in c.items() if k not in ("src", "fixed_words", "fixed_for", "edited_words")} for c in job["clips"]]
+    out["clips"] = [public_clip(c) for c in job["clips"]]
     ai = job.get("ai") or {}
     out["ai"] = {"tokens": ai.get("tokens", 0), "note": ai.get("note", ""), "used": bool(ai.get("model"))}   # never the model, never raw errors
     if job.get("status") == "queued":
@@ -394,7 +457,49 @@ def request_render(jid, cid, changes: dict):
         raise ValueError("A clip can be 3 to 180 seconds long.")
     for k in ("hook", "title", "description", "style", "layout"):
         if k in changes:
-            new[k] = str(changes[k])[:{"hook": 60, "title": 100, "description": 2000}.get(k, 20)]
+            new[k] = str(changes[k])[:{"hook": 120, "title": 100, "description": 2000}.get(k, 20)]
+    for k in ("branding", "watermark", "intro_cover", "outro"):
+        if k in changes:
+            new[k] = bool(changes[k])
+    if "branding" in changes:
+        for sub in ("watermark", "intro_cover", "outro"):
+            if sub not in changes:
+                new[sub] = bool(changes["branding"])
+    for k in ("brand_name", "ig_handle", "yt_channel"):
+        if k in changes:
+            new[k] = re.sub(r"[^\w\-\.\@\/\# ]+", "", str(changes[k] or "")).strip()[:40]
+    if "brand_id" in changes:
+        # The renderer re-reads the brand as this job's owner. A foreign id can never resolve, so it can only
+        # ever fall back to the account's own branding.
+        new["brand_id"] = re.sub(r"[^\w\-]+", "", str(changes["brand_id"] or ""))[:40]
+    if "sonic" in changes:
+        new["sonic"] = bool(changes["sonic"])
+    if "sonic_gain_db" in changes:
+        try:
+            new["sonic_gain_db"] = max(-24.0, min(6.0, float(changes["sonic_gain_db"])))
+        except (TypeError, ValueError):
+            raise ValueError("The signature sound gain must be a number.")
+    if "brand_color" in changes:
+        new["brand_color"] = styles._hex(str(changes["brand_color"] or "").strip(), "brand_color", "#f47b20")
+    if "highlight_words" in changes:
+        # Manual emphasis from the Caption Studio. Only words already in the transcript can be emphasised; the
+        # renderer still never invents or reorders speech.
+        raw = changes["highlight_words"]
+        if raw is None:
+            raw = []
+        if not isinstance(raw, (list, tuple)):
+            raise ValueError("Emphasised words must be a list.")
+        new["highlight_words"] = [re.sub(r"[^\w\-'\.]+", "", str(w))[:60]
+                                  for w in raw if str(w).strip()][:24]
+    for pk in ("instagram", "youtube"):
+        if isinstance(changes.get(pk), dict):
+            cur_p = dict(new.get(pk) or {})
+            for sk, sv in changes[pk].items():
+                if sk in ("hook", "title", "caption", "description", "pinned_comment"):
+                    cur_p[sk] = str(sv or "").strip()[:1500]
+                elif sk == "hashtags" and isinstance(sv, list):
+                    cur_p[sk] = [re.sub(r"[^\w]", "", str(t)).lower() for t in sv if str(t).strip()][:8]
+            new[pk] = cur_p
     for k in ("caption_cfg", "layout_cfg"):
         if k in changes:
             if changes[k] in (None, ""):
@@ -407,8 +512,22 @@ def request_render(jid, cid, changes: dict):
                 raise ValueError("That style setting isn't valid.")
     if new.get("style") not in render.STYLES:
         new["style"] = DEFAULTS["style"]
+    new["layout"] = styles.LAYOUT_ALIASES.get(new.get("layout"), new.get("layout"))
     if new.get("layout") not in render.LAYOUTS:
         new["layout"] = DEFAULTS["layout"]
+    if "layout" in changes and not isinstance(changes.get("layout_cfg"), dict):
+        new.pop("layout_cfg", None)
+        clip.pop("layout_cfg", None)
+    if "style" in changes and not isinstance(changes.get("caption_cfg"), dict):
+        # Picking a style in the editor must win over any fine-tuning saved before it, or the new style
+        # would be written to the clip and then ignored by the renderer.
+        new.pop("caption_cfg", None)
+        clip.pop("caption_cfg", None)
+        new["creative_direction"] = "off"
+    if new.get("layout") not in ("auto", "smart"):
+        for dk in ("director_plan", "director_reason", "director_shots", "director_auto"):
+            new.pop(dk, None)
+            clip.pop(dk, None)
     clip.update(new, status="queued")
     save(job)
     _q.put(("clip", jid, cid))
@@ -496,6 +615,95 @@ def use_variant(job, clip, index) -> dict:
     return public(job)
 
 
+def _sync_clip_to_db(job: dict, clip: dict):
+    """Safely persist clip metadata and scoring breakdown to the podcast_clips table."""
+    try:
+        with db.engine.begin() as conn:
+            project_id = str(job.get("id"))
+            user_id = str(job.get("user") or "local")
+            now_t = time.time()
+            
+            sel = conn.execute(db.podcast_projects.select().where(db.podcast_projects.c.id == project_id)).first()
+            if not sel:
+                conn.execute(db.podcast_projects.insert().values(
+                    id=project_id,
+                    user_id=user_id,
+                    title=str(job.get("title") or "Untitled"),
+                    source_url=str(job.get("source", {}).get("url") or ""),
+                    source_type=str(job.get("source", {}).get("type") or "url"),
+                    status=str(job.get("status") or "done"),
+                    duration=float(job.get("duration") or 0.0),
+                    created_at=now_t,
+                    updated_at=now_t,
+                ))
+            else:
+                conn.execute(db.podcast_projects.update().where(db.podcast_projects.c.id == project_id).values(
+                    status=str(job.get("status") or "done"),
+                    updated_at=now_t,
+                ))
+                
+            cid = f"{project_id}_{clip['id']}"
+            scores = clip.get("scores") or {}
+            hooks = clip.get("hooks") or {}
+            
+            c_sel = conn.execute(db.podcast_clips.select().where(db.podcast_clips.c.id == cid)).first()
+            clip_vals = dict(
+                project_id=project_id,
+                user_id=user_id,
+                start=float(clip.get("start", 0.0)),
+                end=float(clip.get("end", 0.0)),
+                duration=round(float(clip.get("end", 0.0)) - float(clip.get("start", 0.0)), 2),
+                score=int(clip.get("score", 70)),
+                score_hook=int(scores.get("hook_strength", 18)),
+                score_emotion=int(scores.get("emotional_impact", 15)),
+                score_context=int(scores.get("context_clarity", 16)),
+                score_value=int(scores.get("value", 12)),
+                score_retention=int(scores.get("retention", 8)),
+                score_ending=int(scores.get("ending_impact", 8)),
+                categories=json.dumps(clip.get("categories") or ["Interesting conversations"]),
+                hook_curiosity=str(hooks.get("curiosity") or ""),
+                hook_bold=str(hooks.get("bold") or ""),
+                hook_emotional=str(hooks.get("emotional") or ""),
+                selected_hook=str(clip.get("hook") or clip.get("selected_hook") or ""),
+                titles=json.dumps(clip.get("titles") or [clip.get("title") or ""]),
+                selected_title=str(clip.get("title") or ""),
+                description=str(clip.get("description") or ""),
+                caption=str(clip.get("caption") or ""),
+                hashtags=json.dumps(clip.get("hashtags") or []),
+                pinned_comment=str(clip.get("pinned_comment") or ""),
+                call_to_action=str(clip.get("call_to_action") or ""),
+                thumbnail_text=str(clip.get("thumbnail_text") or ""),
+                explanation=str(clip.get("explanation") or clip.get("reason") or ""),
+                transcript_evidence=str(clip.get("transcript_evidence") or ""),
+                transcript=str(clip.get("transcript") or ""),
+                confidence=float(clip.get("confidence", 0.85)),
+                suggested_improvements=str(clip.get("suggested_improvements") or ""),
+                approval_status=str(clip.get("approval_status", "recommended")),
+                render_status=str(clip.get("status", "done")),
+                rendered_file=str(clip.get("file") or ""),
+                rendered_cover=str(clip.get("cover") or ""),
+                creative_direction=str(clip.get("creative_direction") or ""),
+                direction_version=int(clip.get("direction_version") or 0),
+                duration_basis=str(clip.get("duration_basis") or ""),
+                master_duration=float(clip.get("master_duration") or clip.get("duration") or 0.0),
+                topic=str(clip.get("topic") or ""),
+                narrative_summary=str(clip.get("narrative_summary") or ""),
+                visual_direction=str(clip.get("visual_direction") or ""),
+                narrative_json=json.dumps(clip.get("narrative") or {}),
+                platform_fit_json=json.dumps(clip.get("platform_fit") or {}),
+                quality_json=json.dumps({"warnings": clip.get("quality_warnings") or [],
+                                         "confidence": clip.get("confidence"),
+                                         "uncertainty": clip.get("uncertainty")}),
+                updated_at=now_t,
+            )
+            if not c_sel:
+                conn.execute(db.podcast_clips.insert().values(id=cid, created_at=now_t, **clip_vals))
+            else:
+                conn.execute(db.podcast_clips.update().where(db.podcast_clips.c.id == cid).values(**clip_vals))
+    except Exception:
+        pass
+
+
 def render_one(job, clip, words):
     d = Path(job["dir"])
     clip["status"] = "rendering"
@@ -505,13 +713,89 @@ def render_one(job, clip, words):
             _piece_again(job, clip)
         off = clip.get("src_offset", 0.0)
         src = Path(clip["src"]) if clip.get("src") else Path(job["source_path"])
-        if not clip.get("src"):
+        if not clip.get("src") and job.get("duration"):
             clip["end"] = min(clip["end"], job["duration"])
-        local = dict(clip, start=clip["start"] - off, end=clip["end"] - off, hook=roman.to_roman(clip.get("hook") or ""))
+        opts = job.get("options") or {}
+        is_pod = opts.get("mode", "auto") == "podcast" or (opts.get("mode", "auto") == "auto" and not job.get("game"))
+        b_def = opts.get("branding") if opts.get("branding") is not None else is_pod
+        def _bflag(key):
+            if clip.get(key) is not None:
+                return bool(clip[key])
+            if opts.get(key) is not None:
+                return bool(opts[key])
+            return bool(b_def)
+        local = dict(
+            clip,
+            start=clip["start"] - off,
+            end=clip["end"] - off,
+            hook=roman.to_roman(clip.get("hook") or ""),
+            branding=_bflag("branding"),
+            watermark=_bflag("watermark"),
+            intro_cover=_bflag("intro_cover"),
+            outro=_bflag("outro"),
+            brand_name=clip.get("brand_name") or opts.get("brand_name") or config.BRAND_NAME,
+            ig_handle=clip.get("ig_handle") or opts.get("ig_handle") or config.IG_HANDLE,
+            yt_channel=clip.get("yt_channel") or opts.get("yt_channel") or config.YT_CHANNEL,
+            brand_color=clip.get("brand_color") or opts.get("brand_color") or "#F47B20",
+        )
+        # The Brand Kit, when the clip names one. A deleted or foreign brand is never guessed at: the clip
+        # falls back to the account's own branding and says so.
+        bid = str(clip.get("brand_id") or opts.get("brand_id") or "")
+        if bid:
+            from . import brands as _brands
+            row = _brands.get(str(job.get("user") or "local"), bid)
+            if row:
+                tok = row["tokens"]
+                local["brand_name"] = tok["name"] or local["brand_name"]
+                local["ig_handle"] = tok["ig_handle"] or local["ig_handle"]
+                local["yt_channel"] = tok["yt_channel"] or local["yt_channel"]
+                local["brand_color"] = tok["accent"]
+                direction = str(local.get("creative_direction") or "editorial")
+                secs = float(local["end"] - local["start"])
+                plan = _brands.outro_plan(row, direction, secs, secs, secs)
+                local["outro_seconds"] = plan["duration"]
+                local["outro_style"] = plan["style"]
+                local["cta"] = _brands.cta_for(row, "youtube", direction)
+                if tok["outro"]["tagline"]:
+                    local["outro_tagline"] = tok["outro"]["tagline"]
+                logo = _brands.asset_path(tok.get("logo") or "")
+                if logo:
+                    local["brand_logo"] = logo
+                # A clip may switch the signature sound off, and may override only its gain. Everything else
+                # stays owned by the Brand Kit, so there is one place to change the identity.
+                sonic = _brands.asset_path(tok["sonic"]["asset"])
+                if sonic and clip.get("sonic") is not False:
+                    spec = dict(tok["sonic"])
+                    if clip.get("sonic_gain_db") is not None:
+                        try:
+                            spec["gain_db"] = max(-24.0, min(6.0, float(clip["sonic_gain_db"])))
+                        except (TypeError, ValueError):
+                            pass
+                    local["sonic_asset"] = sonic
+                    local["sonic_spec"] = spec
+            else:
+                clip.setdefault("quality_warnings", []).append(
+                    "The selected brand no longer exists; this clip used the account's own branding.")
         near = _caption_words(job, clip, words, off) if clip.get("captions", True) else []
         out = render.render_clip(src, d / "clips", clip["id"], local, near, job["width"], job["height"])
         clip.update(out, status="done", version=clip.get("version", 0) + 1, error=None)
-        post = {k: clip[k] for k in ("title", "description", "hashtags", "hook", "start", "end", "score")}
+        try:
+            exp_dur = (clip["end"] - clip["start"]) + (1.0 if out.get("intro_added") else 0.0) + (2.0 if out.get("outro_added") else 0.0)
+            chk = quality.verify_clip_quality(
+                d / "clips" / out["file"],
+                expected_duration=exp_dur,
+                min_duration=3.0,
+                max_duration=185.0,
+            )
+            clip["quality_check"] = chk
+        except Exception as qe:
+            clip["quality_check"] = {"ok": False, "error": str(qe)[:200]}
+        try:
+            _sync_clip_to_db(job, clip)
+        except Exception:
+            pass
+        post = {k: clip.get(k) for k in ("title", "description", "hashtags", "hook", "start", "end", "score")}
+        post["creative_direction"] = clip.get("creative_direction") or "off"
         (d / "clips" / f"{clip['id']}.json").write_text(json.dumps(post, indent=1), encoding="utf-8")
         if clip["version"] == 1:
             clip.setdefault("made_at", time.time())
@@ -871,8 +1155,31 @@ def _run_job(job):
             continue
         quota = max(1, math.ceil(left / (len(blocks) - bi)))
         s0 = int((a - lo) / 16000)
-        found, ai = brain.find_clips(bw, db[s0: s0 + int((b - a) / 16000) + 1], (b - a) / 16000, job["title"],
-                                     job["uploader"], quota, int(o["min_len"]), int(o["max_len"]), notes.append, game=game)
+        is_podcast = o.get("mode") == "podcast" or (o.get("mode") == "auto" and not game)
+        if is_podcast:
+            _set(job, stage="Analyzing conversation & scoring viral highlights" + where)
+            found = podcast.discover_podcast_clips(
+                bw,
+                title=job.get("title", ""),
+                uploader=job.get("uploader", ""),
+                attribution=f"Originally from {job.get('uploader') or 'creator'}",
+                ig_handle=o.get("ig_handle") or config.IG_HANDLE,
+                yt_channel=o.get("yt_channel") or config.YT_CHANNEL,
+                max_clips=quota,
+                # Content decides the length by default. "range" honours the numbers the person set.
+                min_len=(narrative.MIN_CLIP_SEC if o.get("duration_mode", "content") == "content"
+                         else int(o["min_len"])),
+                # A master edit may run past a platform's 3-minute recommendation; the platform
+                # packages are checked separately and a shorter coherent cut is offered when possible.
+                max_len=(narrative.processing_limit() if o.get("duration_mode", "content") == "content"
+                         else int(o["max_len"])),
+            )
+            found = found[:left]
+            ai = {"model": ai_service.models()[0] if ai_service.ready() else "", "tokens": 0}
+        else:
+            found, ai = brain.find_clips(bw, db[s0: s0 + int((b - a) / 16000) + 1], (b - a) / 16000, job["title"],
+                                         job["uploader"], quota, int(o["min_len"]), int(o["max_len"]), notes.append, game=game)
+            found = found[:left]
         tokens += ai.get("tokens", 0)
         model = ai.get("model") or model
         if ai.get("note"):
@@ -890,19 +1197,60 @@ def _run_job(job):
                     keep.append(c)
             found = keep
         for c in found:
-            c.update(id=f"clip{len(job['clips']) + 1:02d}", start=round(c["start"] + shift, 2),
-                     end=round(c["end"] + shift, 2), style=o["style"], layout=o["layout"],
-                     captions=o.get("captions", True), status="queued", version=0,
-                     **{k: o[k] for k in ("caption_cfg", "layout_cfg") if o.get(k)})
+            if not c.get("hook"):
+                c["hook"] = c.get("selected_hook") or c.get("title") or c.get("selected_title") or "Highlight"
+            if not c.get("title"):
+                c["title"] = c.get("selected_title") or c.get("hook") or job.get("title") or "Clip"
+            if not c.get("reason") and c.get("explanation"):
+                c["reason"] = c["explanation"]
+            b_master = o.get("branding") if o.get("branding") is not None else is_podcast
+            # Creative direction: chosen from what this clip actually is. Only for podcast reels, and only
+            # when the person has not already picked a caption style or layout of their own.
+            dir_pref = (o.get("direction") or "auto") if is_podcast else "off"
+            cdir, cdir_name = None, "off"
+            if dir_pref != "off":
+                cdir_name = creative.choose(
+                    c.get("categories") or [], c.get("scores") or {},
+                    float(c["end"]) - float(c["start"]),
+                    c.get("transcript") or c.get("transcript_evidence") or "",
+                    preferred=None if dir_pref == "auto" else dir_pref,
+                )
+                cdir = creative.render_settings(cdir_name)
+            own_style = bool(o.get("caption_cfg")) or o.get("style") != DEFAULTS["style"]
+            own_layout = bool(o.get("layout_cfg")) or o.get("layout") not in (DEFAULTS["layout"], "auto")
+            c.update(
+                id=f"clip{len(job['clips']) + 1:02d}",
+                start=round(c["start"] + shift, 2),
+                end=round(c["end"] + shift, 2),
+                style=(cdir["style"] if cdir and not own_style else o["style"]),
+                layout=(cdir["layout"] if cdir and not own_layout else o["layout"]),
+                creative_direction=cdir_name,
+                captions=o.get("captions", True),
+                status="queued",
+                version=0,
+                branding=bool(b_master),
+                watermark=bool(b_master if o.get("watermark") is None else o["watermark"]),
+                intro_cover=bool(b_master if o.get("intro_cover") is None else o["intro_cover"]),
+                outro=bool(b_master if o.get("outro") is None else o["outro"]),
+                brand_name=o.get("brand_name") or config.BRAND_NAME,
+                ig_handle=o.get("ig_handle") or config.IG_HANDLE,
+                yt_channel=o.get("yt_channel") or config.YT_CHANNEL,
+                brand_color=o.get("brand_color") or "#F47B20",
+                score_breakdown=c.get("scores") or c.get("criteria_scores"),
+                **{k: o[k] for k in ("caption_cfg", "layout_cfg") if o.get(k)},
+                **(({"caption_cfg": cdir["caption_cfg"]}
+                    if cdir and not own_style else {})),
+                **(({"layout_cfg": cdir["layout_cfg"]}
+                    if cdir and cdir.get("layout_cfg") and not own_layout else {})),
+            )
             if o.get("hook_text"):        # the person's own big text, on every clip, in place of the AI's
                 c["hook"] = o["hook_text"]
             if o.get("description_text"):  # ...and their own description, exactly as written
                 c["description"], c["fixed_description"] = o["description_text"], True
             else:                          # no description of their own: 3 to 5 fitting hashtags go at the end of the AI's
                 hashtags.apply(c, words, job["title"], job["uploader"], game)
-            # Only the gameplay layout uses a webcam, so it is only looked for then, and only once: a
-            # stream with no webcam is not looked for again on every clip of it.
-            if o["layout"] == "gameplay" and face is False:
+            # Only picture-in-picture layouts (gameplay, pip, reaction) use a webcam, so it is only looked for once.
+            if styles.layout_config(o.get("layout_cfg") or o["layout"])["kind"] == "pip" and face is False:
                 face = _facecam(job)
             if face:
                 c["facecam"] = face
@@ -959,8 +1307,9 @@ def _worker(quick_only=False):
             else:
                 clip = next(c for c in job["clips"] if c["id"] == cid)
                 words = []
-                if clip.get("captions", True):
-                    words = json.loads((Path(job["dir"]) / "words.json").read_text(encoding="utf-8"))
+                wf = Path(job["dir"]) / "words.json"
+                if clip.get("captions", True) and wf.is_file():
+                    words = json.loads(wf.read_text(encoding="utf-8"))
                 render_one(job, clip, words)
         except Exception as e:  # noqa: BLE001
             (Path(job["dir"]) / "error.log").write_text(traceback.format_exc(), encoding="utf-8")

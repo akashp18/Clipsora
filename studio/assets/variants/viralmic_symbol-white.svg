@@ -1,0 +1,23 @@
+<svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="100%" height="100%"><title>VIRALMIC</title>
+  
+  <!-- Left Arm of V (Pure White) -->
+  <polygon points="28.0,44.7 82.0,44.7 128.0,124.4 128.0,217.9" fill="#ffffff" />
+
+  <!-- Right Arm of V (Electric Orange) -->
+  <polygon points="228.0,44.7 174.0,44.7 128.0,124.4 128.0,217.9" fill="#ffffff" />
+
+  <!-- Studio Microphone Capsule (Electric Orange) -->
+  <path d="M 103.0,57.0 C 103.0,38.1 153.0,38.1 153.0,57.0 L 153.0,91.9 L 103.0,91.9 Z" fill="#ffffff" />
+
+  <!-- Precision Triangular Base -->
+  <polygon points="109.24,91.9 146.76,91.9 128.0,124.4" fill="#ffffff" />
+
+  <!-- Acoustic Grille Cutout Slits (Filled dark interior) -->
+  <rect x="109.0" y="48.0" width="38.0" height="4.5" rx="2.2" fill="#ffffff" />
+  <rect x="107.0" y="59.0" width="42.0" height="4.5" rx="2.2" fill="#ffffff" />
+  <rect x="107.0" y="70.0" width="42.0" height="4.5" rx="2.2" fill="#ffffff" />
+  <rect x="109.0" y="81.0" width="38.0" height="4.5" rx="2.2" fill="#ffffff" />
+
+  <!-- Acoustic Shockmount Collar (Filled arc) -->
+  <path d="M 97.0,89.0 C 97.0,109.0 159.0,109.0 159.0,89.0 L 154.5,89.0 C 154.5,104.5 101.5,104.5 101.5,89.0 Z" fill="#ffffff" />
+</svg>

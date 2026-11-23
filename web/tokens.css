@@ -1,11 +1,8 @@
-/* Clipsora design tokens — one source of truth for colour, type, shape, spacing and motion.
+/* Clipsora 2.0 Design System — Cinema Obsidian Dark & Studio Porcelain Light.
  *
- * Warm editorial studio: ivory paper, graphite ink, sand rules, one terracotta accent and a muted olive for
- * secondary marks. Every screen reads these names, never a literal colour, so one change here restyles the
- * whole app and the two themes stay in step. The older `--brand*` names are aliases of the accent.
- *
- * Dark is the default: the same warm neutrals turned down, so the work (frames, waveforms, transcripts) is the
- * brightest thing on screen. No gradients, no glow, no glass — separation comes from surface steps and 1px lines.
+ * Designed as a flagship AI video studio: deep obsidian cinema chrome so 9:16 video previews,
+ * kinetic captions, and VIRALMIC branding pop with broadcast-grade contrast, paired with electric
+ * VIRALMIC orange (#F47B20) accents, crisp 1px structural hairlines, and modern rounded geometry.
  */
 :root{
   /* ---------- type ---------- */
@@ -19,7 +16,7 @@
 
   /* ---------- space, shape and control sizes (4px foundation) ---------- */
   --sp-1:4px;--sp-2:8px;--sp-3:8px;--sp-4:12px;--sp-5:16px;--sp-6:20px;--sp-7:24px;--sp-8:32px;--sp-9:40px;--sp-10:56px;
-  --r-xs:4px;--r-sm:5px;--r:6px;--r-lg:8px;--r-xl:10px;--r-pill:999px;
+  --r-xs:6px;--r-sm:8px;--r:10px;--r-lg:14px;--r-xl:18px;--r-pill:999px;
   --rail:264px;--rail-mini:72px;
   --h-sm:32px;--h:38px;--h-lg:44px;
   --icon-sm:16px;--icon:18px;--icon-lg:20px;
@@ -28,67 +25,66 @@
   --dur-1:120ms;--dur-2:180ms;--dur-3:240ms;
   --ease:cubic-bezier(.2,.8,.2,1);
 
-  /* ---------- elevation: lines first, shadow only where something floats ---------- */
-  --shadow-1:0 1px 2px rgba(32,35,33,.06);
-  --shadow-2:0 12px 28px -10px rgba(32,35,33,.24),0 2px 6px rgba(32,35,33,.06);
+  /* ---------- elevation ---------- */
+  --shadow-1:0 1px 2px rgba(10,12,18,.06);
+  --shadow-2:0 16px 40px -12px rgba(10,12,18,.22),0 2px 8px rgba(10,12,18,.08);
 
-  /* ---------- accent: terracotta ---------- */
-  --accent:#C76B45;--accent-hover:#B65D38;--accent-press:#A6502E;
-  --accent-2:#8E4A2B;--accent-rgb:199,107,69;
-  --accent-soft:#F6E6DE;--accent-line:#E8C9B9;--accent-ink:#FAF9F6;--accent-text:#A34F2C;
+  /* ---------- accent: VIRALMIC electric orange ---------- */
+  --accent:#F47B20;--accent-hover:#FF8B33;--accent-press:#D96814;
+  --accent-2:#C4580A;--accent-rgb:244,123,32;
+  --accent-soft:rgba(244,123,32,.12);--accent-line:rgba(244,123,32,.35);--accent-ink:#FFFFFF;--accent-text:#C4580A;
 
-  /* ---------- secondary mark: muted olive ---------- */
-  --olive:#727B5B;--olive-soft:#E9EBDF;--olive-text:#565E43;
+  /* ---------- secondary mark ---------- */
+  --olive:#5B677B;--olive-soft:#EDF0F6;--olive-text:#434D5E;
 
-  /* ---------- surfaces ---------- */
-  --bg:#F3F0E9;--surface:#FAF9F6;--surface-2:#F7F4EE;--surface-3:#EDE8DE;
-  --muted:#F0ECE3;--hover:#E8E2D6;
-  --line:#DED7C9;--line-2:#D9D0C0;
+  /* ---------- surfaces (Studio Porcelain Light) ---------- */
+  --bg:#F5F6FA;--surface:#FFFFFF;--surface-2:#F8F9FC;--surface-3:#EEF0F6;
+  --muted:#EEF0F6;--hover:#E6E9F2;
+  --line:#E2E5EF;--line-2:#CFD4E2;
 
   /* ---------- text ---------- */
-  --text:#202321;--dim:#5C5F5A;--faint:#8B8A80;--faint-2:#A3A199;--on-solid:#FAF9F6;
+  --text:#0F1117;--dim:#545A6B;--faint:#7C8396;--faint-2:#9AA1B2;--on-solid:#FFFFFF;
 
   /* ---------- the rail (sidebar) ---------- */
-  --frame:#EDE8DE;--frame-2:#E3DCCE;--frame-3:#D9D0C0;
-  --frame-line:rgba(32,35,33,.1);--frame-text:#202321;--frame-dim:#727B5B;
-  --frame-chip:rgba(32,35,33,.07);--frame-hover:rgba(32,35,33,.05);
+  --frame:#FFFFFF;--frame-2:#F3F4F8;--frame-3:#E6E9F2;
+  --frame-line:#E2E5EF;--frame-text:#0F1117;--frame-dim:#666D80;
+  --frame-chip:rgba(15,17,23,.06);--frame-hover:rgba(15,17,23,.05);
 
   /* ---------- states ---------- */
-  --good:#4F7346;--good-soft:#E8EFE2;--good-text:#3F5C38;
-  --warn:#9A7124;--warn-soft:#F6EEDB;--warn-text:#7C5A1B;
-  --bad:#A8452C;--bad-strong:#8F3823;--bad-soft:#F7E5E0;--bad-text:#8F3823;
-  --live:#B4462F;
+  --good:#16A34A;--good-soft:rgba(22,163,74,.12);--good-text:#15803D;
+  --warn:#D97706;--warn-soft:rgba(217,119,6,.12);--warn-text:#B45309;
+  --bad:#DC2626;--bad-strong:#B91C1C;--bad-soft:rgba(220,38,38,.10);--bad-text:#B91C1C;
+  --live:#EF4444;
 
-  /* legacy aliases: the accent used to be called brand */
+  /* legacy aliases */
   --brand:var(--accent);--brand-press:var(--accent-press);--brand-ink:var(--accent-ink);
   --brand-soft:var(--accent-soft);--brand-line:var(--accent-line);--brand-deep:var(--accent-text);--brand-text:var(--accent-text);
 
   color-scheme:light;
 }
 
-/* The dark studio: graphite page, charcoal panels, ivory text. The terracotta lifts a little so it keeps its
- * weight on a dark ground; olive and the state colours do the same. */
+/* Cinema Obsidian Dark — Flagship Clipsora 2.0 default studio theme */
 html[data-theme="dark"]{
-  --accent:#D98A61;--accent-hover:#E39A73;--accent-press:#C77A52;
-  --accent-2:#E7AE8B;--accent-rgb:217,138,97;
-  --accent-soft:rgba(217,138,97,.15);--accent-line:#5A4034;--accent-ink:#202321;--accent-text:#E7AE8B;
-  --olive:#9AA383;--olive-soft:rgba(154,163,131,.15);--olive-text:#B7BFA2;
+  --accent:#F47B20;--accent-hover:#FF8C36;--accent-press:#D96814;
+  --accent-2:#FFA35C;--accent-rgb:244,123,32;
+  --accent-soft:rgba(244,123,32,.15);--accent-line:rgba(244,123,32,.40);--accent-ink:#0A0B0F;--accent-text:#FFA35C;
+  --olive:#8A94A8;--olive-soft:rgba(138,148,168,.14);--olive-text:#B2BACB;
 
-  --bg:#202321;--surface:#292D2B;--surface-2:#2F3331;--surface-3:#363B37;
-  --muted:#2B2F2C;--hover:#343934;
-  --line:#3A3F3B;--line-2:#464B45;
+  --bg:#0A0B0F;--surface:#12141B;--surface-2:#171A23;--surface-3:#1E222E;
+  --muted:#181B24;--hover:#202431;
+  --line:#232736;--line-2:#32384D;
 
-  --text:#F3F0E9;--dim:#BDB9AC;--faint:#8B8A80;--faint-2:#9A998E;--on-solid:#202321;
+  --text:#F4F2ED;--dim:#A4A9BA;--faint:#70768A;--faint-2:#8A90A6;--on-solid:#FFFFFF;
 
-  --frame:#1B1E1C;--frame-2:#262A27;--frame-3:#303531;
-  --frame-line:rgba(243,240,233,.09);--frame-text:#F3F0E9;--frame-dim:#9A9B8F;
-  --frame-chip:rgba(243,240,233,.09);--frame-hover:rgba(243,240,233,.06);
+  --frame:#0D0E13;--frame-2:#161922;--frame-3:#1E222E;
+  --frame-line:#1F2330;--frame-text:#F4F2ED;--frame-dim:#858B9E;
+  --frame-chip:rgba(255,255,255,.07);--frame-hover:rgba(255,255,255,.05);
 
-  --good:#9BB583;--good-soft:rgba(155,181,131,.15);--good-text:#B9CFA5;
-  --warn:#D6AB5C;--warn-soft:rgba(214,171,92,.15);--warn-text:#E5C489;
-  --bad:#DE8A72;--bad-strong:#EDA48E;--bad-soft:rgba(222,138,114,.14);--bad-text:#EDA48E;
-  --live:#DE7A60;
+  --good:#2FD07D;--good-soft:rgba(47,208,125,.14);--good-text:#5CE39D;
+  --warn:#F5A623;--warn-soft:rgba(245,166,35,.15);--warn-text:#FFC25C;
+  --bad:#F05252;--bad-strong:#FF7070;--bad-soft:rgba(240,82,82,.14);--bad-text:#FF8585;
+  --live:#FF3B30;
 
-  --shadow-2:0 20px 44px -16px rgba(0,0,0,.6),0 2px 6px rgba(0,0,0,.3);
+  --shadow-2:0 24px 56px -16px rgba(0,0,0,.78),0 2px 10px rgba(0,0,0,.45);
   color-scheme:dark;
 }

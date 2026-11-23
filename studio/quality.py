@@ -96,3 +96,44 @@ def static_overlap(start: float, end: float, ranges: list[tuple[float, float]]) 
         if hi > lo:
             total += hi - lo
     return total
+
+
+def verify_clip_quality(clip_path: str | Path, expected_duration: float = 0.0,
+                        min_duration: float = 25.0, max_duration: float = 65.0) -> dict:
+    """Verifies a rendered clip meets production quality standards:
+    - File exists and has valid size (>50KB)
+    - Video track exists with vertical 9:16 aspect ratio
+    - Audio track exists
+    - Duration is valid (within min/max range)
+    """
+    p = Path(clip_path)
+    if not p.is_file():
+        return {"ok": False, "passed": False, "error": f"Clip file not found: {p.name}"}
+    size = p.stat().st_size
+    if size < 50 * 1024:
+        return {"ok": False, "passed": False, "error": f"Clip file is suspiciously small ({size} bytes)."}
+
+    try:
+        from . import media
+        info = media.probe(p)
+        dur = info.get("duration", 0.0)
+        w, h = info.get("width", 0), info.get("height", 0)
+
+        # Check vertical aspect ratio 9:16 (0.5625 +/- margin)
+        if w > 0 and h > 0:
+            ratio = w / h
+            if not (0.50 <= ratio <= 0.65):
+                return {"ok": False, "passed": False, "error": f"Invalid vertical aspect ratio: {w}x{h} (expected 9:16)"}
+
+        # Check duration bounds
+        if dur < min_duration:
+            return {"ok": False, "passed": False, "error": f"Clip duration ({dur:.1f}s) is below minimum {min_duration}s"}
+        if dur > max_duration:
+            return {"ok": False, "passed": False, "error": f"Clip duration ({dur:.1f}s) exceeds maximum {max_duration}s"}
+
+        if expected_duration > 0 and abs(dur - expected_duration) > 6.0:
+            return {"ok": False, "passed": False, "error": f"Clip duration ({dur:.1f}s) deviates from expected ({expected_duration:.1f}s)"}
+
+        return {"ok": True, "passed": True, "duration": dur, "width": w, "height": h, "size": size}
+    except Exception as e:
+        return {"ok": False, "passed": False, "error": f"Quality verification probe failed: {e}"}

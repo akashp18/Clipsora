@@ -89,8 +89,16 @@ class Gate:
             # Only the upload may be big. Everything else is a small form, and is cut off at 256 KB whatever its
             # headers claim, so nobody can fill the server's memory by posting junk (signed in or not).
             piece = method == "PUT" and path.startswith("/api/upload/")
-            cap = ((min(config.MAX_UPLOAD_MB, config.UPLOAD_PART_MB) if piece else config.MAX_UPLOAD_MB) + 8) * 1024 * 1024 \
-                if path == "/api/upload" or piece else 256 * 1024
+            style_up = method == "POST" and path == "/api/styles/learn/upload"
+            logo_up = method == "POST" and path == "/api/brand/logo"
+            if path == "/api/upload" or piece:
+                cap = ((min(config.MAX_UPLOAD_MB, config.UPLOAD_PART_MB) if piece else config.MAX_UPLOAD_MB) + 8) * 1024 * 1024
+            elif style_up:
+                cap = (min(config.MAX_UPLOAD_MB, 500) + 8) * 1024 * 1024
+            elif logo_up:
+                cap = 4 * 1024 * 1024
+            else:
+                cap = 256 * 1024
             try:
                 if int(req.headers.get("content-length") or 0) > cap:
                     return await deny(413, f"That file is too big. The limit is {config.MAX_UPLOAD_MB} MB." if path == "/api/upload" else "That request is too large.")
@@ -140,11 +148,14 @@ class Gate:
         if user and path in ("/login", "/signup"):
             return await deny(303, "", redirect="/app")
         scope.setdefault("state", {})["user"] = user
-        if user and path in ("/api/upload", "/api/upload/start") and method == "POST":
+        if user and path in ("/api/upload", "/api/upload/start", "/api/styles/learn/upload") and method == "POST":
             # decided before a single byte of the file is accepted: verified, has a free slot, has disk space
             def allowed():
                 with ctx.as_user(user.id):
-                    _need_verified(); _job_slots(); _quota()                     # noqa: E702
+                    _need_verified()
+                    if path != "/api/styles/learn/upload":
+                        _job_slots()
+                    _quota()
             try:
                 await run_in_threadpool(allowed)
             except HTTPException as e:
@@ -208,7 +219,8 @@ class Compress:
 
     async def __call__(self, scope, receive, send):
         path = scope.get("path", "") if scope["type"] == "http" else ""
-        media = path.startswith(("/media/", "/api/upload")) or path.endswith((".mp4", ".jpg", ".png", ".webp", ".ico"))
+        media = (path.startswith(("/media/", "/api/upload"))
+                 or path.endswith((".mp4", ".jpg", ".png", ".webp", ".ico", ".zip", "/download-approved", "/download-all")))
         await (self.plain if scope["type"] != "http" or media else self.gzip)(scope, receive, send)
 
 
@@ -324,6 +336,11 @@ from .routers import oauth as _oauth_routes  # noqa: E402
 from .routers import storage as _storage_routes  # noqa: E402
 from .routers import postqueue as _postqueue_routes  # noqa: E402
 from .routers import admin as _admin_routes  # noqa: E402
+from .routers import podcast as _podcast_routes  # noqa: E402
+from .routers import creative as _creative_routes  # noqa: E402
+from .routers import brands as _brands_routes  # noqa: E402
+from .routers import covers as _covers_routes  # noqa: E402
+from .routers import publishing as _publishing_routes  # noqa: E402
 
 # The tests call these by name on this module (server.rerender, server._ip, ...). Keeping them here means
 # a test or a script never has to know which file a handler moved to.
@@ -349,6 +366,11 @@ for _routes in (
     _storage_routes,
     _postqueue_routes,
     _admin_routes,
+    _podcast_routes,
+    _creative_routes,
+    _brands_routes,
+    _covers_routes,
+    _publishing_routes,
 ):
     app.include_router(_routes.router)
 

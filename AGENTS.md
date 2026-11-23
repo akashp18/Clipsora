@@ -23,6 +23,9 @@ are there, and only then offer to delete the old folder. Never delete anything w
 - The speech model (about 480 MB) downloads by itself on first start; `python -m studio.fetch_model` gets it ahead of time.
 - Tests: `python tests/run.py`. It starts a throwaway copy on a spare port with an empty data folder. Run it
   before and after any change to `studio/`. No keys needed.
+- Browser tests: `python tests/browser/run_browser.py` (after `python -m playwright install chromium firefox`).
+  It starts an isolated server with generated media and compares 24 committed visual baselines at desktop,
+  tablet and mobile. `--update-baselines` rewrites them; `--only <screen> --headed` debugs one screen.
 - To try a risky change by hand without touching real data:
   `CLIPSORA_DATA=<temp folder> CLIPSORA_PORT=8766 python -m studio.server`.
 
@@ -36,6 +39,12 @@ are there, and only then offer to delete the old folder. Never delete anything w
 | `studio/api_common.py` | The guards and limits the routers share: free slots, disk quota, throttling, sync tokens, and the shared `BOOT`/`WEB`/`VIDEO_TYPES` |
 | `studio/config.py` | Every setting, read from environment variables |
 | `studio/ai.py` | The only code that talks to an AI service, and the AI settings saved from the dashboard (`ai.json` in the data folder) |
+| `studio/narrative.py` | Where a story starts and ends: sentence boundaries, content-driven clip length, platform limits, duplicate removal |
+| `studio/creative.py` | The five creative directions: typography, colour, motion, CTAs, and the exact render settings each one resolves to |
+| `studio/covers.py` | Cover frames, headlines and the five 1080x1920 compositions, with measured text boxes |
+| `studio/brands.py` | Several brands per account, their tokens, adaptive outros, CTAs and the sonic mix filter |
+| `studio/publishing.py` | Per-platform publishing states, durable attempts, idempotency and reconciliation |
+| `studio/migrations.py` | Numbered additive schema migrations for SQLite and PostgreSQL; `db.init()` runs them |
 | `studio/brain.py` | The prompts: finding clips, live judging, hooks and titles, caption fixes |
 | `studio/usage.py` | The record of AI calls and tokens shown on the AI usage page |
 | `studio/jobs.py` | The video pipeline and the fair queue |
@@ -45,7 +54,14 @@ are there, and only then offer to delete the old folder. Never delete anything w
 | `studio/media.py` | Downloading (yt-dlp), probing, audio |
 | `studio/auth.py`, `studio/account.py`, `studio/admin.py` | Sign-in, deleting things, the admin dashboard |
 | `studio/db.py` | Database tables (SQLAlchemy core; SQLite or PostgreSQL) |
-| `web/index.html` | The whole signed-in app, one file, no build step |
+| `web/index.html` | The Classic signed-in app, one file, no build step (served at `/classic`) |
+| `web/studio*.html/css/js` | The studio at `/app`: shell, design system, flows, editor, Brand Kit, publishing |
+| `tests/browser/` | Playwright journeys, axe checks, visual baselines and the isolated server fixture |
+| `studio/routers/brands.py` | Brand CRUD plus owner-checked logo/signature-sound upload, read and delete |
+| `studio/styles.py` | The versioned caption and layout presets shared by preview and renderer |
+| `studio/render.py` | ASS construction, font metrics, line breaking, animation and ffmpeg composition |
+| `docs/CAPTION_QUALITY_AUDIT.md` | Classic vs Studio evidence, defects and corrections |
+| `docs/CAPTION_DESIGN_SYSTEM.md` | Typography, grouping, motion, safe areas and parity rules |
 
 ## Rules worth knowing
 
@@ -60,6 +76,12 @@ are there, and only then offer to delete the old folder. Never delete anything w
   is all; otherwise add one function that returns `(parsed JSON, tokens in, tokens out)`.
 - **Clips are rendered in a short temporary folder** and moved into place (`render.render_clip`): ffmpeg's caption
   step cannot open paths longer than 260 characters on Windows.
+- **Publishing goes through `publishing.py`.** `posting._post` reserves a durable attempt before uploading and
+  records the platform's answer after; never set a post to posted without the platform's id. A timeout is
+  `needs_attention`, not success.
+- **The story decides a clip's length.** `narrative.natural_window` grows a moment out to the sentences that
+  contain it; never add a target duration or stretch a finished thought to reach a minimum. Platform limits are
+  checked separately (`narrative.platform_fit`).
 - **Secrets** are read from the environment or from files named by `*_FILE` settings. Never write a key, a real
   address or a personal path into a tracked file.
 - **Pages** are plain HTML, CSS and JavaScript. Keep the existing palette, no shadows, and hover states that

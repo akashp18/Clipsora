@@ -4,7 +4,7 @@
 
 **For** streamers, podcasters and ghost-clippers who publish daily shorts from long footage
 **who** are tired of per-minute billing, uploading raw streams to a vendor, and AI that cannot be corrected,
-**Shortsmith** is a self-hosted clipping studio that turns a VOD or live stream into captioned vertical clips with your own AI key, and shows the reasoning behind every cut.
+**Clipsora** is a self-hosted clipping studio that turns a VOD or live stream into captioned vertical clips with your own AI key, and shows the reasoning behind every cut.
 **Unlike** cloud clippers, it never bills by source length, never uploads your footage anywhere, and lets you fix any word or any opening by hand.
 
 **Claims we may make (all verifiable in the repo):** local media pipeline; unlimited source length; BYO AI key including a locally-run model; per-clip reason and score; word-level caption editing; live clipping with two independent judges; MIT licensed; runs with one Docker command.

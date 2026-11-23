@@ -49,7 +49,7 @@ def ts(v):
 caps = styles.CAPTION_PRESETS
 lays = styles.LAYOUT_PRESETS
 check("14 caption presets", len(caps) == 14, str(len(caps)))
-check("16 layouts", len(lays) == 16, str(len(lays)))
+check("17 layouts", len(lays) == 17, str(len(lays)))
 check("the three original styles are still there", all(k in caps for k in ("bounce", "hype", "clean")))
 check("the eight original layouts are still there",
       all(k in lays for k in ("blur", "zoom", "crop", "left", "right", "fit", "split", "gameplay")))
@@ -57,11 +57,17 @@ check("every preset carries every caption field",
       all(set(styles.CAPTION_DEFAULTS) <= set(p) for p in caps.values()),
       str([k for k, p in caps.items() if not set(styles.CAPTION_DEFAULTS) <= set(p)]))
 check("every caption font is one the app ships", all(p["font"] in styles.FONTS for p in caps.values()))
+shipped = Path(render.__file__).resolve().parent / "fonts"
+missing_fonts = [f for f in render.FONT_FILES.values() if not (shipped / f).is_file()]
+check("every bundled caption face has its file", not missing_fonts, str(missing_fonts))
+unmeasured = [n for n in styles.FONTS.values() if n not in render.FONT_FILES]
+check("every caption face can be measured and drawn", not unmeasured, str(unmeasured))
 cat = {p["category"] for p in caps.values()}
 check("presets are grouped into categories", len(cat) >= 4, str(cat))
 check("every layout describes itself", all(p["description"] for p in lays.values()))
+check("the auto reframe layout is part of the library", "reframe" in lays and lays["reframe"]["kind"] == "reframe")
 check("the library sent to the browser is stable and complete",
-      len(styles.caption_presets()) == 14 and len(styles.layout_presets()) == 16
+      len(styles.caption_presets()) == 14 and len(styles.layout_presets()) == 17
       and {"id", "label", "font_name"} <= set(styles.caption_presets()[0]))
 
 # ---------------------------------------------------------------------------------------- configuration rules
@@ -137,6 +143,20 @@ check("no box means outline and shadow only",
 ass_long = render.build_ass(WORDS, 0.0, 4.0, "", styles.caption_config("clean", {"max_words": 2}), [], 300, 1500)
 ys = {re.search(r"\\pos\(\d+,(\d+)\)", e["text"]).group(1) for e in dialogues(ass_long) if e["style"] == "Cap"}
 check("a long phrase wraps instead of shrinking to nothing", len(ys) >= 1)
+
+# ---------------------------------------------------------------------------------------- typographic layout
+seq = [{"w": w, "s": i * .4, "e": i * .4 + .35} for i, w in enumerate(["I", "think", "we", "should", "be"])]
+check("short clauses split in balance, not with an orphan at the end",
+      [len(g) for g in render._groups(seq, 3)] == [2, 3], str([len(g) for g in render._groups(seq, 3)]))
+check("a pause or sentence end starts a new caption group",
+      len(render._groups(seq[:3] + [{**seq[3], "s": 4.0, "e": 4.3}] + seq[4:], 8)) == 2)
+four = ["WE", "BUILD", "THINGS", "TODAY"]
+four_lines = render._lines(four, [100] * 4, 100, render._Font.get(styles.FONTS["archivo"]), 3, 1000)
+check("wrapping a caption preserves the spoken word order",
+      [t for line in four_lines for t, _ in line] == four, str(four_lines))
+spaced = render.build_ass(WORDS, 0.0, 4.0, "", styles.caption_config("clean", {"letter_spacing": 12}), [], 300, 1500)
+spaced_style = next(l for l in spaced.splitlines() if l.startswith("Style: Cap,"))
+check("letter spacing reaches the ASS style, in the Spacing column", spaced_style.split(",")[14] == "12", spaced_style)
 
 # ---------------------------------------------------------------------------------------- layouts
 for name, p in lays.items():

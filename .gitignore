@@ -30,3 +30,18 @@ __pycache__/
 .venv/
 venv/
 .pytest_cache/
+
+# local ffmpeg used for verification (never committed)
+.tools/
+
+# local preview state / server log
+.preview-data/
+.preview-server.log
+.checkpoints/
+
+# Playwright run output (baselines are committed)
+tests/browser/artifacts/
+
+# stray render output from ad-hoc test runs in the repo root
+test_cover.jpg
+test_outro.jpg

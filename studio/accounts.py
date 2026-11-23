@@ -23,8 +23,13 @@ _lock = threading.RLock()
 _states: dict = {}   # one-time values for the connect redirects: state -> (user id, when, platform)
 
 SECRET_KEYS = ("discord_webhook", "telegram_token")
-SETTING_DEFAULTS = {"discord_webhook": "", "telegram_token": "", "telegram_chat": "", "paused": False,
-                    "digest_hour": 8, "last_digest": "", "tour_done": False}
+SETTING_DEFAULTS = {
+    "discord_webhook": "", "telegram_token": "", "telegram_chat": "", "paused": False,
+    "digest_hour": 8, "last_digest": "", "tour_done": False,
+    "brand_name": "", "ig_handle": "", "yt_channel": "", "brand_color": "#F47B20",
+    "outro_tagline": "DAILY HIGH-SIGNAL PODCAST CLIPS",
+    "default_intro_cover": True, "default_watermark": True, "default_outro": True,
+}
 
 YT_SCOPES = "https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly"
 IG = "https://graph.instagram.com"
@@ -250,10 +255,13 @@ def save_settings(patch: dict) -> dict:
         for k, v in patch.items():
             if k not in SETTING_DEFAULTS:
                 continue
-            if k in ("paused", "tour_done"):
+            if k in ("paused", "tour_done", "default_intro_cover", "default_watermark", "default_outro"):
                 v = bool(v)
             elif k == "digest_hour":
                 v = max(0, min(23, int(v)))
+            elif k == "brand_color":
+                raw_c = str(v or "").strip()
+                v = raw_c if (len(raw_c) == 7 and raw_c.startswith("#")) else "#F47B20"
             else:
                 v = str(v).strip()[:300]
                 if k == "discord_webhook" and v and not v.startswith("https://discord.com/api/webhooks/"):
@@ -263,6 +271,11 @@ def save_settings(patch: dict) -> dict:
             s[k] = v
         _write("settings.json", s)
         return s
+
+
+def brand_logo_path() -> Path | None:
+    p = config.user_dir(ctx.uid()) / "brand_logo.png"
+    return p if p.is_file() else None
 
 
 def public_settings() -> dict:

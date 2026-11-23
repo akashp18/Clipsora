@@ -117,8 +117,9 @@ checked for size (1080×1920) and for the chosen style in the exported `.ass`.
   frame); the schema therefore does not expose them rather than showing a control that does nothing.
 - **Custom output dimensions are not supported** — output stays 1080×1920 (`config.OUT_W/OUT_H`). "Canvas" means
   the picture fitted on a colour field inside that frame.
-- **Caption fonts** are the three bundled ones (Poppins ExtraBold, Anton, Archivo Black). Adding a preset with
-  another font needs the `.ttf` in `studio/fonts` first.
+- **Caption fonts** are the bundled faces in `studio/fonts`. Poppins ExtraBold, Anton and Archivo Black drive the
+  presets; Bebas Neue, Fjalla One, DM Serif Display, Zilla Slab, Bungee, Russo One, Permanent Marker and Space Mono
+  are selectable custom faces. Adding another font needs its `.ttf` and licence text in `studio/fonts` first.
 - Two video sources are the same file split into halves (side by side, split screen, podcast). Independent
   second-source footage is not part of the pipeline yet.
 - The clip editor fine-tunes one clip: it sends `caption_cfg` / `layout_cfg` with the re-make and keeps its own

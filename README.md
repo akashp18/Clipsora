@@ -7,227 +7,211 @@
 
 **A clipping studio that shows its work.** Your footage. Your AI. Your clips.
 
-Clipsora turns long videos and live streams into captioned vertical clips, ready to post. Free and open source:
-run it on your own computer or server, with your own AI key.
+Clipsora turns long videos and live streams into captioned vertical clips, ready to post. Free and open source: run it on your own computer or server, with your own AI key.
 
-Paste a YouTube, Twitch or Kick link (or upload a file) and Clipsora finds the moments worth clipping, cuts them
-to 9:16, adds word-by-word captions and a hook, and can post them to your connected accounts. It can also record a
-creator's live stream and clip the highlights while the stream is still running.
+Paste a YouTube, Twitch or Kick link (or upload a video file) and Clipsora finds the moments worth clipping, cuts them to 9:16 vertical format, adds word-by-word animated captions with a hook, and can schedule or post them to your connected accounts. It can also monitor a creator's live stream and extract highlight clips in real time while the stream is still running.
 
-## What it does
+---
 
-- **Clips from any video.** Transcribes the audio, asks an AI which moments would hold a stranger's attention, and
-  renders each one in the caption style and frame you choose.
-- **Live clipping.** Records a stream into a rolling buffer and clips as it happens, using loudness, chat activity
-  and the transcript.
-- **Fourteen caption styles and sixteen frames.** A library of looks you can pick from, each one drawn from its own
-  numbers, and a panel that changes the parts that matter: size, outline, shadow, colours, case, words per line,
-  animation, position, background. See [Captions and frames](#captions-and-frames).
-- **The clip editor.** Open any clip to trim the start and end, rewrite its hook and title, try another style or
-  frame, fine-tune it, and re-make just that clip.
-- **Workspaces per creator.** Channels, clip settings, posting rules and an activity log for each creator you clip.
-- **Posting.** Connect YouTube, Instagram and TikTok in one click, then queue or auto-post finished clips, with
-  spacing and daily caps (see [DEPLOY.md](DEPLOY.md#connecting-youtube-instagram-and-tiktok) for the one-time setup).
-- **No sign-in on your own computer.** It opens straight into the dashboard. On a shared server, switch accounts on
-  (`CLIPSORA_ACCOUNTS=1`) for email or Google sign-in and an admin dashboard.
-- **Your own AI.** Gemini, OpenAI, Grok, Groq, OpenRouter, Claude, a local model through Ollama, or anything that
-  speaks the OpenAI chat format. No key at all also works: clips are then picked by loudness.
+## Highlights
 
-## Quick start
+- **Clips from any video:** Transcribes audio locally on your machine, asks an AI model which moments hold attention, and renders vertical clips in your chosen frame and caption style.
+- **Real-time live clipping:** Records a live stream into a rolling buffer and clips highlights as they happen using audio energy, chat activity, and transcripts.
+- **14 caption styles & 16 frame layouts:** Clean, bold, editorial, karaoke, typewriter, and gamer styles, paired with blurred fills, split screens, facecam cuts, and brand canvases.
+- **Built-in clip editor:** Trim start/end times, refine AI-generated hooks and titles, switch caption styles or frame layouts, and re-render only the clip you changed.
+- **Creator workspaces:** Separate channel presets, clip defaults, posting rules, and logs for every creator you manage.
+- **Multi-platform auto-posting:** Connect YouTube Shorts, Instagram Reels, and TikTok to queue or publish clips with rate limits and spacing.
+- **Private & self-hosted:** No mandatory sign-in on your own computer. Audio stays on your machine; AI prompts send only transcripts without raw footage.
+- **Bring your own AI (BYOK):** Works with Gemini, OpenAI, Grok, Groq, OpenRouter, Claude, local Ollama models, or loudness-only detection without any key.
 
-You need Python 3.10 or newer and `ffmpeg`. On Windows: `winget install Gyan.FFmpeg`. On a Mac: `brew install ffmpeg`.
-On Linux: `sudo apt install ffmpeg`. Clipsora finds it by itself and tells you in the dashboard if it is missing.
+---
 
-Put Clipsora in a short folder that stays put: `C:\clipsora` on Windows, `~/clipsora` on a Mac or Linux. Not inside a
-temporary folder or an AI assistant's workspace: those get cleaned up, and on Windows a folder that deep stops the
-speech model from loading (Windows can't open files whose full path is over 260 characters). If an AI assistant
-installs it for you, it should ask you where to put it first ([AGENTS.md](AGENTS.md) tells it to).
+## Quick Start
 
-```bash
-git clone https://github.com/akashp18/Clipsora.git
-```
+### Option A: Run with Docker (Recommended)
 
-```bash
-cd Clipsora        # C:\clipsora on Windows
-```
+Make sure Docker Desktop (or the Docker daemon) is running.
 
-```bash
-pip install -r requirements.txt
-```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/akashp18/Clipsora.git
+   cd Clipsora
+   ```
 
-Start the server:
+2. **Build and run the container:**
+   ```bash
+   docker build -t clipsora .
+   docker run -d --name clipsora -p 8765:8765 -v clipsora_data:/data clipsora
+   ```
 
-```bash
-python -m studio.server
-```
+3. **Open the studio:**
+   Visit [http://127.0.0.1:8765](http://127.0.0.1:8765). The dashboard opens directly without sign-in.
 
-The first start downloads the speech model by itself (about 480 MB, once).
+---
 
-Open http://127.0.0.1:8765. There is no sign-in: it opens straight into the dashboard. Go to **Settings, AI**, choose
-your AI service, paste your key and press **Save and test** (see [Choose your AI](#choose-your-ai)).
+### Option B: Run locally with Python
 
-## Choose your AI
+**Requirements:**
+- Python 3.10 or newer
+- `ffmpeg` installed and available in your `PATH` (Windows: `winget install Gyan.FFmpeg`, macOS: `brew install ffmpeg`, Linux: `sudo apt install ffmpeg`)
 
-Clipsora needs a chat model that can return JSON. The easy way is in the dashboard: **Settings, AI**. Pick the
-service, paste your key, press **Find models** to choose from the service's own list, then **Save and test**. The
-key is kept in the data folder on your machine and is never shown again.
+> [!IMPORTANT]
+> Install Clipsora in a short, permanent directory such as `C:\clipsora` on Windows or `~/clipsora` on macOS/Linux. On Windows, deeply nested paths can exceed the 260-character path limit and prevent the speech transcription library from loading.
 
-If you prefer a file (or run a server), the same three things can go in `.env`. What is saved in the dashboard wins:
+1. **Clone and enter the directory:**
+   ```bash
+   git clone https://github.com/akashp18/Clipsora.git
+   cd Clipsora
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Start the server:**
+   ```bash
+   python -m studio.server
+   ```
+   *On first launch, Clipsora downloads the local speech recognition model (~480 MB).*
+
+4. **Open the studio:**
+   Visit [http://127.0.0.1:8765](http://127.0.0.1:8765).
+
+---
+
+## Choose Your AI
+
+Clipsora uses an AI chat model that outputs structured JSON to detect hooks and moments worth clipping. You bring your own API key and pay the provider directly:
+
+1. In the dashboard, navigate to **Settings > AI**.
+2. Select your provider, paste your API key, and click **Find models** to choose an available model.
+3. Click **Save and test**. Keys are stored securely in your local data directory and never sent back to any third party.
+
+Alternatively, configure your provider in a `.env` file (see [`.env.example`](.env.example)):
 
 ```ini
 CLIPSORA_AI_PROVIDER=gemini
 CLIPSORA_AI_MODELS=gemini-2.5-flash
-CLIPSORA_AI_KEY=your-key-here
+CLIPSORA_AI_KEY=your-api-key-here
 ```
 
-| `CLIPSORA_AI_PROVIDER` | Service | Where to get a key |
+| Provider | Supported Service | Where to Get a Key |
 |---|---|---|
-| `gemini` | Google Gemini | https://aistudio.google.com/apikey |
-| `openai` | OpenAI | https://platform.openai.com/api-keys |
-| `xai` | Grok (xAI) | https://console.x.ai |
-| `groq` | Groq | https://console.groq.com/keys |
-| `openrouter` | OpenRouter (many models, one key) | https://openrouter.ai/keys |
-| `anthropic` | Claude | https://console.anthropic.com |
-| `ollama` | A model on your own machine, no key | https://ollama.com |
-| `custom` | Any OpenAI-compatible address: also set `CLIPSORA_AI_BASE_URL` | |
+| `gemini` | Google Gemini (Fast & inexpensive) | [Google AI Studio](https://aistudio.google.com/apikey) |
+| `openai` | OpenAI (GPT-4o, GPT-4o-mini) | [OpenAI Platform](https://platform.openai.com/api-keys) |
+| `xai` | Grok (xAI) | [xAI Console](https://console.x.ai) |
+| `groq` | Groq (Llama 3.3, ultra-low latency) | [Groq Console](https://console.groq.com/keys) |
+| `openrouter` | OpenRouter (Aggregated providers) | [OpenRouter Keys](https://openrouter.ai/keys) |
+| `anthropic` | Anthropic Claude | [Anthropic Console](https://console.anthropic.com) |
+| `ollama` | Local Ollama instance (No key required) | [Ollama](https://ollama.com) |
+| `custom` | Any OpenAI-compatible endpoint | Provide `CLIPSORA_AI_BASE_URL` |
 
-- `CLIPSORA_AI_MODELS` is the model id exactly as the service names it. Model names change often, so check the
-  service's current list. Several ids separated by commas are tried in order, which gives you a fallback.
-- A fast, inexpensive model is the right choice. A one-hour video is read in about four requests.
-- You pay the AI service directly for what you use. The **AI usage** page in the app shows how many requests and
-  tokens each video took.
-- Speech to text does not use the AI service. It runs on your own machine, so audio never leaves it.
+*Note: Speech-to-text runs entirely on your own processor by default. Audio never leaves your system.*
 
-## Captions and frames
+---
 
-A clip's look is two choices, made in the composer and changeable per clip in the editor.
+## Caption Styles & Layout Frames
 
-- **Caption style:** fourteen presets, grouped by character (clean, bold, editorial, karaoke and so on). Each one
-  carries its own font, colours, outline, background, case, position and animation.
-- **Frame:** sixteen layouts for the picture itself: blurred fill, zoom, centre crop, letterbox, side by side,
-  picture in picture, gameplay with facecam, a canvas for a quote, and brand frames. Each has its own focal point,
-  zoom, margin, gap and background.
-- **Fine-tune:** open *Customise this style* or the frame settings and change what that look actually supports.
-  Every control in the panel reaches the render, and choosing a different style or frame clears the customisation
-  that belonged to the old one, so nothing stale is carried across.
-- **Per clip:** the editor keeps its own choices for one clip, so changing one clip never changes the others.
+Every clip look combines a **caption preset** with a **frame layout**:
 
-The picker in the composer and the picker in the editor draw the same sample for a given style, and both work from
-the keyboard (arrow keys, Home/End, type-ahead, Escape). [docs/CAPTION_LAYOUT_SYSTEM.md](docs/CAPTION_LAYOUT_SYSTEM.md)
-is the reference for what each preset contains and how the ffmpeg graph is built.
+- **14 Caption Styles:**
+  - *Clean:* Clean, Minimal, Podcast, Classic
+  - *Popular / Bold:* Bounce, Hype, Kinetic Highlight
+  - *Cinematic:* Cinematic, Editorial
+  - *Social & Playful:* Gamer, Stacked, Karaoke, Typewriter, Glitch
+- **16 Video Frames:**
+  - Blurred background fill, full zoom, center crop, letterbox, side-by-side, picture-in-picture, facecam gaming layout, quote canvas, and branded borders.
+- **Customization Panel:**
+  - Fine-tune font sizes, outline thickness, colors, text shadows, casing, line breaks, positioning, and animation effects. Changes can be applied per-clip without affecting others.
 
-## The clip editor
+See [docs/CAPTION_LAYOUT_SYSTEM.md](docs/CAPTION_LAYOUT_SYSTEM.md) for layout formulas and rendering details.
 
-Click a clip to open it: the video plays on the left, and five cards on the right hold the trim, the hook and title,
-the caption style, the frame, and the facts about the clip (length, size, where it came from). The footer holds the
-one main action, **Re-make clip**, which renders again with whatever you changed and leaves the rest alone.
+---
 
-## Settings
+## Production & Multi-User Deployment
 
-Everything is set through environment variables, normally in a `.env` file next to this README.
-[`.env.example`](.env.example) lists every setting with a short explanation; they all start with `CLIPSORA_`. The ones
-that matter first:
+For team setups or shared servers:
+- **Turn on authentication:** Set `CLIPSORA_ACCOUNTS=1` in `.env` to require login and separate accounts.
+- **Docker Compose:** Use the provided [`docker-compose.yml`](docker-compose.yml) with automatic PostgreSQL database management and HTTPS via Caddy:
+  ```bash
+  cp .env.example .env
+  # Set CLIPSORA_DOMAIN, POSTGRES_PASSWORD, and COMPOSE_PROFILES=own-https
+  docker compose up -d --build
+  ```
+- **Admin tools:** Grant admin privileges from the terminal:
+  ```bash
+  docker compose exec app python -m studio.admin grant user@example.com
+  ```
 
-| Setting | What it is for |
+Detailed production setup guides, reverse proxy configurations (Nginx/Traefik), and social media OAuth instructions can be found in [DEPLOY.md](DEPLOY.md).
+
+---
+
+## Project Structure
+
+| Directory / File | Description |
 |---|---|
-| `CLIPSORA_AI_PROVIDER`, `CLIPSORA_AI_MODELS`, `CLIPSORA_AI_KEY` | The AI that picks clips and writes titles (or set it in the dashboard) |
-| `CLIPSORA_ACCOUNTS` | `1` makes everyone sign in. Use it on any server other people can reach |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Optional: Sign in with Google, and connecting YouTube |
-| `CLIPSORA_SMTP_*`, `CLIPSORA_MAIL_FROM` | Optional: confirmation and password emails |
-| `CLIPSORA_DATA` | Where videos, clips and the database are kept (default `./data`) |
+| `studio/` | Backend engine: FastAPI server, pipeline orchestrator, live stream buffer, render queue |
+| `studio/styles.py` | Definitions for the 14 caption presets and 16 frame layouts |
+| `studio/render.py` | Video rendering, ffmpeg filter graph generator, Pillow text drawing |
+| `studio/ai.py` | Unified AI provider client (Gemini, OpenAI, Anthropic, Groq, Ollama) |
+| `studio/transcribe.py` | On-device speech recognition via `sherpa-onnx` and Parakeet model |
+| `studio/fonts/` | Bundled open-source typography used for clip rendering |
+| `web/` | Web dashboard: pure HTML, CSS tokens, and JavaScript (zero build step) |
+| `tests/` | Automated test suite verifying auth, processing queues, and security |
 
-`.env`, the `secrets/` folder and all user data are ignored by git. Keep keys there, never in the code.
+---
 
-## Admins
+## Testing
 
-This only matters with accounts switched on (`CLIPSORA_ACCOUNTS=1`); without them you are the owner and can do
-everything. An account is an admin only when the database says so. No email address is special in the code and no web
-request can change a role. Do it on the machine that runs Clipsora:
-
-```bash
-python -m studio.admin grant you@example.com
-```
-
-`revoke` and `list` work the same way. The admin dashboard is at `/admin` and answers "not found" to everyone else.
-
-## How it is built
-
-| Part | What it is |
-|---|---|
-| `studio/` | The server: FastAPI, the clip pipeline, live recording, accounts |
-| `studio/styles.py` | The single list of caption styles and frames, and the rule that resolves one into a full configuration |
-| `studio/render.py` | Cutting, layouts and captions (ffmpeg and Pillow); reads only the keys `styles.py` defines |
-| `studio/ai.py` | The only file that talks to an AI service. Add a provider here |
-| `web/` | The pages: landing, sign-in, the app, the admin dashboard (plain HTML, CSS and JavaScript, no build step) |
-| `web/tokens.css` | Colour, type, shape and spacing for the whole app; the two themes read the same names |
-| `tests/` | Tests that run against a throwaway copy of the app |
-| `deploy/`, `Dockerfile`, `docker-compose.yml` | One-server deployment with PostgreSQL and automatic HTTPS |
-
-Video work is done with `ffmpeg` and `yt-dlp`. Speech is transcribed with `sherpa-onnx` and the Parakeet model.
-Data is kept per user: accounts in the database (SQLite on your own computer, PostgreSQL on a server), videos and
-clips in each user's own folder. [AGENTS.md](AGENTS.md) is a short map of the code for contributors and AI coding
-assistants.
-
-## Where your videos and clips are kept
-
-Everything Clipsora keeps is in one folder: videos, clips, recordings, creators, settings and the speech model. By
-default it is the `data` folder inside Clipsora. **Settings, Storage** shows the folder and how much room its drive
-has, opens it in one click, and lets you move it to another drive: choose the new folder, and Clipsora moves
-everything there the next time it starts. If the drive is nearly full, Clipsora says so and stops taking new videos
-until there is room. (`CLIPSORA_DATA` in `.env` still works and takes priority.)
-
-## Updating
-
-Clipsora checks its repository on GitHub once a minute while it runs. When a newer version is out, the dashboard
-shows a notice within a minute or two (no restart needed), with what changed and how to update: ask your AI coding
-assistant to do it (the notice has a sentence to paste), or run `git pull && pip install -r requirements.txt` in the
-Clipsora folder and restart it (with Docker: `git pull && docker compose up -d --build`). Your `.env`, keys and clips
-are not touched. Only the two commit ids are sent to GitHub; set `CLIPSORA_UPDATE_CHECK=0` to turn the check off, or
-`CLIPSORA_UPDATE_REPO=owner/repo` to look somewhere else.
-
-## Deploy
-
-[DEPLOY.md](DEPLOY.md) walks through a single server with Docker: the app, PostgreSQL, and Caddy for HTTPS.
-
-```bash
-docker compose up -d --build
-```
-
-## How it behaves under load
-
-- The page asks the server one small question every few seconds. When nothing has changed, the answer comes
-  straight from memory.
-- Each person's videos wait in their own line and the lines take turns, so one person cannot hold everyone up.
-- The server measures its own processor, memory and disk every second. Extra videos and recordings start only
-  while there is room, wait briefly when it is nearly full, and continue the moment it frees up.
-- There are no limits on upload size, video length, recordings, creators or storage unless you set them in
-  `.env`. Five videos can be sent at once. Request sizes are always capped, so junk can't fill the memory.
-
-## Tests
+Run the automated test suite against an isolated, throwaway instance:
 
 ```bash
 python tests/run.py
 ```
 
-This starts a copy of the app on a spare port with an empty temporary data folder, runs the permission, abuse and
-queue tests against it, then removes it. It needs no keys and never touches real data.
+Tests run on an ephemeral port with a temporary data directory and do not touch your actual database or API keys.
 
-## Security
+---
 
-- With sign-in off, Clipsora listens on this computer only (`127.0.0.1`), refuses changes sent by other websites,
-  and only answers to its own address. Do not expose it to the internet that way: turn accounts on.
-- Passwords are stored only as salted scrypt hashes. Sessions are random tokens stored hashed; cookies are HTTP-only.
-- Every route works out who is asking from the session, never from the request, so users only reach their own data.
-- Only known video sites are fetched, and text from videos is treated as data when it is shown to the AI.
-- Found a problem? Please report it privately through the repository's security advisories instead of opening a
-  public issue.
+## Credits & Acknowledgements
 
-## Using it responsibly
+Clipsora is built on top of excellent open-source software, models, and typography:
 
-Clip videos you made, or have permission to use. You are responsible for the rights to what you download, clip and
-post, and for following the terms of the sites you fetch from and post to.
+### Fonts & Typography
 
-## Licence
+The clip rendering engine ships with the following open-source fonts, distributed under the [SIL Open Font License (OFL) 1.1](http://scripts.sil.org/OFL):
 
-[MIT](LICENSE). Caption fonts in `studio/fonts/` (Anton, Archivo Black, Poppins) are under the SIL Open Font
-License; the licence texts are in the same folder.
+- **[Anton](https://github.com/googlefonts/AntonFont.git)**
+  - Copyright &copy; 2020 The Anton Project Authors
+  - Designed by Vernon Adams
+  - License: SIL Open Font License 1.1 ([studio/fonts/OFL-anton.txt](studio/fonts/OFL-anton.txt))
+- **[Archivo Black](https://github.com/Omnibus-Type/ArchivoBlack)**
+  - Copyright &copy; 2017 The Archivo Black Project Authors
+  - Designed by Omnibus-Type (Héctor Gatti)
+  - License: SIL Open Font License 1.1 ([studio/fonts/OFL-archivoblack.txt](studio/fonts/OFL-archivoblack.txt))
+- **[Poppins](https://github.com/itfoundry/Poppins)**
+  - Copyright &copy; 2020 The Poppins Project Authors
+  - Designed by Indian Type Foundry (Ninad Kale, Jonny Pinhorn)
+  - License: SIL Open Font License 1.1 ([studio/fonts/OFL-poppins.txt](studio/fonts/OFL-poppins.txt))
+- **[Geist](https://vercel.com/font)**
+  - Copyright &copy; Vercel, Inc.
+  - Used in the web interface via Google Fonts under SIL Open Font License 1.1
+
+### Core Libraries & Tools
+
+- **[FFmpeg](https://ffmpeg.org/)** &mdash; Multimedia encoding, filtering, and video assembly.
+- **[sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)** &mdash; Fast, private offline speech-to-text using the NeMo Parakeet TDT model.
+- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** &mdash; Media extraction and stream recording.
+- **[FastAPI](https://fastapi.tiangolo.com/) & [Uvicorn](https://www.uvicorn.org/)** &mdash; Asynchronous web server and API backbone.
+- **[Pillow](https://python-pillow.org/)** &mdash; Image synthesis and font rasterization.
+- **[Deno](https://deno.com/)** &mdash; Sandboxed JavaScript runtime used for modern media extractors.
+
+---
+
+## License & Credits
+
+- Clipsora is licensed under the [MIT License](LICENSE).
+- Bundled fonts located in `studio/fonts/` are licensed under the [SIL Open Font License 1.1](http://scripts.sil.org/OFL) with license texts included in their respective files.
+- For complete third-party licenses, font attributions, and copyright disclosures, see **[CREDITS.md](CREDITS.md)**.

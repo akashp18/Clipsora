@@ -1,0 +1,42 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,Anton,116,&H00EDEDED,&H00EDEDED,&H00101010,&H00000000,0,0,0,0,100,100,0,0,1,5,3,5,0,0,0,1
+Style: Hook,Poppins ExtraBold,96,&H0014100E,&H0014100E,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:00.40,0:00:00.78,Cap,,0,0,0,,{\an5\pos(479,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx116\fscy116)\c&H57D97E&}THIS
+Dialogue: 1,0:00:00.78,0:00:01.16,Cap,,0,0,0,,{\an5\pos(479,1493)\fs116\c&HEDEDED&}THIS
+Dialogue: 1,0:00:00.40,0:00:00.78,Cap,,0,0,0,,{\an5\pos(653,1493)\fs116\c&HEDEDED&}IS
+Dialogue: 2,0:00:00.78,0:00:01.16,Cap,,0,0,0,,{\an5\pos(653,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx122\fscy122)\c&H57D97E&}IS
+Dialogue: 2,0:00:01.16,0:00:01.54,Cap,,0,0,0,,{\an5\pos(482,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx113\fscy113)\c&H57D97E&}WHAT
+Dialogue: 1,0:00:01.54,0:00:01.92,Cap,,0,0,0,,{\an5\pos(482,1493)\fs116\c&HEDEDED&}WHAT
+Dialogue: 1,0:00:01.16,0:00:01.54,Cap,,0,0,0,,{\an5\pos(683,1493)\fs116\c&HEDEDED&}IT
+Dialogue: 2,0:00:01.54,0:00:01.92,Cap,,0,0,0,,{\an5\pos(683,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx122\fscy122)\c&H57D97E&}IT
+Dialogue: 2,0:00:01.92,0:00:02.30,Cap,,0,0,0,,{\an5\pos(431,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx110\fscy110)\c&H57D97E&}SOUNDS
+Dialogue: 1,0:00:02.30,0:00:02.68,Cap,,0,0,0,,{\an5\pos(431,1493)\fs116\c&HEDEDED&}SOUNDS
+Dialogue: 1,0:00:01.92,0:00:02.30,Cap,,0,0,0,,{\an5\pos(728,1493)\fs116\c&HEDEDED&}LIKE
+Dialogue: 2,0:00:02.30,0:00:02.68,Cap,,0,0,0,,{\an5\pos(728,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx116\fscy116)\c&H57D97E&}LIKE
+Dialogue: 2,0:00:02.68,0:00:03.06,Cap,,0,0,0,,{\an5\pos(490,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx112\fscy112)\c&H57D97E&}WHEN
+Dialogue: 1,0:00:03.06,0:00:03.44,Cap,,0,0,0,,{\an5\pos(490,1493)\fs116\c&HEDEDED&}WHEN
+Dialogue: 1,0:00:02.68,0:00:03.06,Cap,,0,0,0,,{\an5\pos(685,1493)\fs116\c&HEDEDED&}A
+Dialogue: 2,0:00:03.06,0:00:03.44,Cap,,0,0,0,,{\an5\pos(685,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx122\fscy122)\c&H57D97E&}A
+Dialogue: 2,0:00:03.44,0:00:03.82,Cap,,0,0,0,,{\an5\pos(353,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx109\fscy109)\c&H57D97E&}THOUGHT
+Dialogue: 1,0:00:03.82,0:00:04.20,Cap,,0,0,0,,{\an5\pos(353,1493)\fs116\c&HEDEDED&}THOUGHT
+Dialogue: 1,0:00:03.44,0:00:03.82,Cap,,0,0,0,,{\an5\pos(749,1493)\fs116\c&HEDEDED&}FINALLY
+Dialogue: 2,0:00:03.82,0:00:04.20,Cap,,0,0,0,,{\an5\pos(749,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx110\fscy110)\c&H57D97E&}FINALLY
+Dialogue: 2,0:00:04.20,0:00:04.58,Cap,,0,0,0,,{\an5\pos(476,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx112\fscy112)\c&H57D97E&}LANDS
+Dialogue: 1,0:00:04.58,0:00:04.96,Cap,,0,0,0,,{\an5\pos(476,1493)\fs116\c&HEDEDED&}LANDS
+Dialogue: 1,0:00:04.20,0:00:04.58,Cap,,0,0,0,,{\an5\pos(697,1493)\fs116\c&HEDEDED&}IN
+Dialogue: 2,0:00:04.58,0:00:04.96,Cap,,0,0,0,,{\an5\pos(697,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx122\fscy122)\c&H57D97E&}IN
+Dialogue: 2,0:00:04.96,0:00:05.34,Cap,,0,0,0,,{\an5\pos(403,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx117\fscy117)\c&H57D97E&}ONE
+Dialogue: 1,0:00:05.34,0:00:05.91,Cap,,0,0,0,,{\an5\pos(403,1493)\fs116\c&HEDEDED&}ONE
+Dialogue: 1,0:00:04.96,0:00:05.34,Cap,,0,0,0,,{\an5\pos(643,1493)\fs116\c&HEDEDED&}PIECE
+Dialogue: 2,0:00:05.34,0:00:05.91,Cap,,0,0,0,,{\an5\pos(643,1493)\fs116\fscx84\fscy84\t(0,56,\fscx118\fscy118)\t(56,170,\fscx113\fscy113)\c&H57D97E&}PIECE

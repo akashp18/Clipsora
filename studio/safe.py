@@ -2,6 +2,13 @@
 import re
 
 _PATH = re.compile(r"(?:[A-Za-z]:)?[\\/][^\s'\"]*[\\/][^\s'\"]+")
+_CTRL = re.compile(r"[\x00-\x1f\x7f]+")
+
+
+def clean(v, limit: int = 200) -> str:
+    """Clean untrusted text into a single safe line within `limit` characters."""
+    s = _CTRL.sub(" ", str(v or "")).replace("<", "\u2039")
+    return re.sub(r"\s+", " ", s).strip()[:limit]
 
 
 def friendly(e, limit=600) -> str:

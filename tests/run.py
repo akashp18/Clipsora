@@ -74,7 +74,16 @@ def main() -> int:
                 ("the storage folder: full drive, open, move", ["tests/test_storage.py"]),
                 ("security: visitor address, email addresses, Google sign-in, prompts", ["tests/test_hardening.py"]),
                 ("long logs, the machine monitor, failed recordings, admin day totals", ["tests/test_robustness.py"]),
-                ("live recording stops and empty stream URLs", ["tests/test_live.py"])]
+                ("live recording stops and empty stream URLs", ["tests/test_live.py"]),
+                ("automated podcast-to-shorts intelligence", ["tests/test_podcast.py"]),
+                ("narrative boundaries and content-driven duration", ["tests/test_narrative.py"]),
+                ("creative directions and render parity", ["tests/test_creative.py"]),
+                ("additive database migrations", ["tests/test_migrations.py"]),
+                ("cover intelligence and composition", ["tests/test_covers.py"]),
+                ("brand kit, outro, CTA and sonic identity", ["tests/test_brands.py"]),
+                ("publishing states, idempotency and reconciliation", ["tests/test_publishing.py"]),
+                ("render and publishing integration", ["tests/test_integration.py"]),
+                ("frame-adaptive AI smart director layout", ["tests/test_director.py"])]
         for name, args in runs:
             print(f"\n=== {name} ===", flush=True)
             r = subprocess.run([sys.executable, *args], cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace")

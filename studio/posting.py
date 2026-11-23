@@ -107,10 +107,58 @@ def _caption(clip, creator):
     return "\n\n".join(x for x in (clip.get("description", ""), tags, creator.get("post_footer", "")) if x)
 
 
+def _publish_begin(p, clip):
+    """Reserve the durable publishing attempt this queue entry represents.
+
+    Returns None when the database is unavailable (the upload still runs, as before), `already` when the
+    platform has it, or `duplicate` when another worker owns the live attempt.
+    """
+    try:
+        from . import publishing
+        platform = p.get("platform")
+        if platform not in publishing.PLATFORMS:
+            return None
+        key = f"{p['job']}_{p['clip']}"
+        package = {"title": clip.get("title"), "description": clip.get("description"),
+                   "hashtags": clip.get("hashtags"),
+                   "cover": clip.get("reel_cover") or clip.get("cover")}
+        row = publishing.ensure(p["user"], key, platform, package)
+        if row["state"] == "published":
+            return {"already": True, "remote_id": row["remote_id"], "url": row["remote_url"]}
+        if row["state"] in ("failed", "needs_attention"):
+            row = publishing.apply(p["user"], key, platform, "retry") or row
+        if row["state"] in ("draft", "ready", "approved", "scheduled"):
+            try:
+                publishing.apply(p["user"], key, platform, "approve")
+            except ValueError:
+                pass
+        got = publishing.begin_attempt(p["user"], key, platform)
+        return {"key": key, "platform": platform, "attempt": got["attempt_id"],
+                "duplicate": bool(got.get("duplicate"))}
+    except Exception as e:  # noqa: BLE001 - but never by posting without a record
+        # Fail closed. If the durable attempt cannot be reserved, an upload could be a duplicate the app
+        # cannot see. Nothing is posted; the caller reports this and the user can retry once the database
+        # is healthy again.
+        return {"blocked": True, "error": str(e)[:300]}
+
+
+def _publish_finish(state, ok, remote_id="", url="", error="", timed_out=False):
+    if not state or not state.get("attempt"):
+        return
+    try:
+        from . import publishing
+        publishing.finish_attempt(state["attempt"],
+                                  "published" if ok else ("unknown" if timed_out else "failed"),
+                                  remote_id=remote_id, remote_url=url, error=error)
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def _post(p):
     job = jobs.get(p["job"])
     clip = next((c for c in job["clips"] if c["id"] == p["clip"]), None) if job else None
     acc = accounts.get(p["account"])
+    state = None
     try:
         if not clip or clip.get("status") != "done":
             raise RuntimeError("The clip no longer exists or is not finished.")
@@ -119,6 +167,21 @@ def _post(p):
         path = Path(job["dir"]) / "clips" / clip["file"]
         creator = creators.get(job["creator"]) or dict(creators.DEFAULTS, name="clips")
         title, cap = clip.get("title") or clip.get("hook") or "Clip", _caption(clip, creator)
+        state = _publish_begin(p, clip)
+        if state and state.get("blocked"):
+            raise RuntimeError("Nothing was posted: Clipsora could not record this upload safely "
+                               f"({state['error']}). Check the database, then retry.")
+        if state and state.get("already"):
+            p.update(status="posted", posted_at=time.time(), remote_id=state.get("remote_id", ""),
+                     url=state.get("url", ""), error=None)
+            _save()
+            _mirror(p)
+            return
+        if state and state.get("duplicate"):
+            p["due_at"] = time.time() + 120        # another worker owns this upload; look again later
+            _save()
+            _mirror(p)
+            return
         if acc["platform"] == "youtube":
             rid, url = accounts.youtube_upload(acc, path, title, cap + "\n\n#Shorts", clip.get("hashtags", []), creator["privacy"])
         elif acc["platform"] == "instagram":
@@ -127,9 +190,21 @@ def _post(p):
             rid, url = accounts.tiktok_upload(acc, path, f"{title}\n\n{cap}", creator["privacy"])
         else:
             raise RuntimeError("That kind of account is no longer supported.")
+        _publish_finish(state, True, remote_id=rid, url=url)
         p.update(status="posted", posted_at=time.time(), remote_id=rid, url=url, error=None)
         creators.log(p["creator"], f"Posted to {acc['name']}: {title}")
     except Exception as e:  # noqa: BLE001
+        timed_out = isinstance(e, (TimeoutError,)) or "timed out" in str(e).lower() or "timeout" in str(e).lower()
+        if state and state.get("blocked"):
+            # No upload happened and none will happen automatically: this is not a transient platform error.
+            p.update(status="failed", error=str(e)[-300:], tries=max(3, p.get("tries", 0)))
+            creators.log(p["creator"], f"Not posted on {p['account_name']}: {p['error']}")
+            alerts.notify(f"post not attempted on {p['account_name']} ({p['title']}): {p['error'][:180]}",
+                          kind="post")
+            _save()
+            _mirror(p)
+            return
+        _publish_finish(state, False, error=str(e)[-500:], timed_out=timed_out)
         p["tries"] += 1
         p["error"] = str(e)[-300:]
         if p["tries"] < 3 and clip and acc:

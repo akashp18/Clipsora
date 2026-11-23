@@ -165,7 +165,7 @@ ACCOUNTS = env("CLIPSORA_ACCOUNTS", "0") == "1"
 # The two buttons along the top of the dashboard: the project's code, and where to follow its maker (feedback goes
 # there too). Set either to an empty value to hide that button, or point them at your own pages in a fork.
 REPO_URL = env("CLIPSORA_REPO_URL", "https://github.com/akashp18/Clipsora").strip()
-FOLLOW_URL = env("CLIPSORA_FOLLOW_URL", "https://www.instagram.com/haziq.builds/").strip()
+FOLLOW_URL = env("CLIPSORA_FOLLOW_URL", "").strip()
 
 # ---------------------------------------------------------------- limits (per user, and for the whole server)
 # Your own Clipsora has no limits unless you set them: 0 (the default) means "none" for every limit below. The
@@ -249,3 +249,8 @@ def _read_google_client() -> tuple:
 # ---------------------------------------------------------------- video
 MAX_SOURCE_HEIGHT = 1080
 OUT_W, OUT_H, OUT_FPS = 1080, 1920, 30
+
+# ---------------------------------------------------------------- optional brand defaults (set in .env, never hardcoded)
+BRAND_NAME = env("CLIPSORA_BRAND_NAME", "").strip()
+IG_HANDLE = env("CLIPSORA_IG_HANDLE", "").strip()
+YT_CHANNEL = env("CLIPSORA_YT_CHANNEL", "").strip()
